@@ -2,6 +2,7 @@
 
 #include "VRCode.h"
 #include "VRPawn.h"
+#include "VRHand.h"
 #include "Runtime/HeadMountedDisplay/Public/IHeadMountedDisplay.h"
 
 // Sets default values
@@ -64,5 +65,24 @@ void AVRPawn::SetupPlayerInputComponent(class UInputComponent* inputComponent)
 {
 	Super::SetupPlayerInputComponent(inputComponent);
 
+	inputComponent->BindAction( "GripLeft", IE_Pressed, this, &AVRPawn::GripLeft );
+	inputComponent->BindAction( "GripLeft", IE_Released, this, &AVRPawn::StopGripLeft );
+
+	inputComponent->BindAction( "GripRight", IE_Pressed, this, &AVRPawn::GripRight );
+	inputComponent->BindAction( "GripRight", IE_Released, this, &AVRPawn::StopGripRight );
 }
 
+void AVRPawn::UpdateGrip( UChildActorComponent *hand, bool pressed )
+{
+	UE_LOG( LogTemp, Warning, TEXT( "Grip input received" ) );
+	AVRHand *vrHand = Cast<AVRHand>( hand->GetChildActor() );
+	if ( vrHand )
+	{
+		UE_LOG( LogTemp, Warning, TEXT( "Cast success" ) );
+		vrHand->shouldGrip = pressed;
+	}
+}
+void AVRPawn::GripLeft()		{ UpdateGrip( LeftHand, true ); }
+void AVRPawn::StopGripLeft()	{ UpdateGrip( LeftHand, false ); }
+void AVRPawn::GripRight()		{ UpdateGrip( RightHand, true ); }
+void AVRPawn::StopGripRight()	{ UpdateGrip( RightHand, false ); }

@@ -6694,6 +6694,7 @@ declare class VRCodeGameModeBase extends GameModeBase {
 declare class VRHand extends Actor { 
 	MotionController: MotionControllerComponent;
 	HandMesh: SkeletalMeshComponent;
+	shouldGrip: boolean;
 	Hand: EControllerHand;
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
 	static StaticClass: any;

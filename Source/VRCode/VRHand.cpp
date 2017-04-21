@@ -19,6 +19,7 @@ AVRHand::AVRHand()
 
 	HandMesh = CreateDefaultSubobject<USkeletalMeshComponent>( TEXT( "HandMesh" ) );
 	HandMesh->SetupAttachment( MotionController );
+	
 
 }
 

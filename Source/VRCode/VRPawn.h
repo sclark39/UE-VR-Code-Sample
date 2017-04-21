@@ -35,7 +35,12 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-
 	
+	void UpdateGrip( UChildActorComponent *hand, bool pressed );
+
+	void GripLeft();
+	void StopGripLeft();
+	void GripRight();
+	void StopGripRight();
 	
 };
