@@ -19,7 +19,12 @@ AVRHand::AVRHand()
 
 	HandMesh = CreateDefaultSubobject<USkeletalMeshComponent>( TEXT( "HandMesh" ) );
 	HandMesh->SetupAttachment( MotionController );
-	
+
+	GrabSphere = CreateDefaultSubobject<USphereComponent>( TEXT( "GrabSphere" ) );
+	GrabSphere->SetupAttachment( HandMesh );
+	GrabSphere->InitSphereRadius( 10.0f );
+	GrabSphere->OnComponentBeginOverlap.AddDynamic( this, &AVRHand::OnComponentBeginOverlap );
+	GrabSphere->OnComponentHit.AddDynamic( this, &AVRHand::OnComponentHit );
 
 }
 
@@ -35,6 +40,51 @@ void AVRHand::OnConstruction(const FTransform & Transform)
 
 }
 
+void AVRHand::RumbleController_Implementation( float intensity )
+{
+	bool isLeft = Hand == EControllerHand::Left;
+
+	FLatentActionInfo actionInfo;
+	actionInfo.CallbackTarget = this;
+	APlayerController *playerController = GetWorld()->GetFirstPlayerController();
+
+	playerController->PlayDynamicForceFeedback( intensity, 
+												0.04f,
+												isLeft, isLeft,
+												!isLeft, !isLeft,
+												EDynamicForceFeedbackAction::Start,
+												actionInfo );
+}
+
+void AVRHand::OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult )
+{
+	if ( ( OtherComp != nullptr ) && ( OtherComp != GrabSphere ) )
+	{
+		UStaticMeshComponent *mesh = Cast<UStaticMeshComponent>( OtherComp );
+		if ( mesh && mesh->IsSimulatingPhysics() )
+		{
+			this->RumbleController( 0.8 );
+		}
+	}
+}
+
+void AVRHand::OnComponentHit( UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit )
+{ 
+	
+	if ( ( OtherComp != nullptr ) && ( OtherComp != GrabSphere ) )
+	{
+		UStaticMeshComponent *mesh = Cast<UStaticMeshComponent>( OtherComp );
+		if ( mesh && mesh->IsSimulatingPhysics() )
+		{
+			const float impulseSize = NormalImpulse.Size();
+			const float intensity = FMath::GetMappedRangeValueClamped( 
+				FVector2D( 0, 1500 ), 
+				FVector2D( 0, 0.8 ), 
+				impulseSize );
+			this->RumbleController( intensity );
+		}
+	}
+}
 // Called when the game starts or when spawned
 void AVRHand::BeginPlay()
 {

@@ -17,6 +17,9 @@ class VRCODE_API AVRHand : public AActor
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent *HandMesh;
 
+	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+	class USphereComponent *GrabSphere;
+
 public:	
 	/** Motion controller (left hand) */
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly )
@@ -37,4 +40,9 @@ public:
 
 	virtual void OnConstruction( const FTransform & Transform ) override;
 	
+	void OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult );
+	void OnComponentHit( UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit );
+
+	UFUNCTION( BlueprintNativeEvent )
+	void RumbleController( float intensity );
 };
