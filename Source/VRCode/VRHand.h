@@ -22,7 +22,7 @@ class VRCODE_API AVRHand : public AActor
 
 public:	
 	/** Motion controller (left hand) */
-	UPROPERTY( VisibleAnywhere, BlueprintReadOnly )
+	UPROPERTY( EditAnywhere, BlueprintReadOnly )
 	bool shouldGrip;
 
 	/** Is this the left or right hand */
