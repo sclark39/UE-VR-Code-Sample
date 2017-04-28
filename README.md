@@ -1,2 +1,3 @@
-# UnrealVirtualRealityCodeSample
-Virtual Reality sample converted from Blueprint to C++ project
+# UE VR Code Sample
+
+This is a WIP conversion of UE's VR Blueprint template into a C++ project.
