@@ -19,6 +19,9 @@ class VRCODE_API AVRHand : public AActor
 {
 	GENERATED_BODY()
 
+	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+	class USceneComponent *Scene;
+
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UMotionControllerComponent *MotionController;
 

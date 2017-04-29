@@ -15,8 +15,10 @@ AVRHand::AVRHand()
 	Hand = EControllerHand::Right;
 	Grip = EGripState::Open;
 
+	Scene = CreateDefaultSubobject<USceneComponent>( TEXT( "Scene" ) );
+
 	MotionController = CreateDefaultSubobject<UMotionControllerComponent>( TEXT( "MotionController" ) );
-	//MotionController->SetupAttachment( RootComponent );
+	MotionController->SetupAttachment( Scene );
 	MotionController->Hand = Hand;
 
 	HandMesh = CreateDefaultSubobject<USkeletalMeshComponent>( TEXT( "HandMesh" ) );
@@ -34,17 +36,18 @@ AVRHand::AVRHand()
 	ArcSpline->SetupAttachment( HandMesh );
 
 	ArcEndPoint = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "ArcEndPoint" ) );
+	ArcEndPoint->SetupAttachment( Scene );
+	ArcEndPoint->SetVisibility( false );
 
 	TeleportCylinder = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "TeleportCylinder" ) );
+	TeleportCylinder->SetupAttachment( Scene );
 
 	TeleportRing = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "TeleportRing" ) );
 	TeleportRing->SetupAttachment( TeleportCylinder );
 
 	TeleportArrow = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "TeleportArrow" ) );
 	TeleportArrow->SetupAttachment( TeleportCylinder );
-
-
-
+	
 }
 
 void AVRHand::OnConstruction(const FTransform & Transform)
@@ -98,12 +101,14 @@ void AVRHand::BeginPlay()
 	// HACK FIX: ISSUE UE-41708
 	//   We need to wait until play begins to set the blueprint for the child actor so we 
 	//   also need to do the flip transform in BeginPlay, since OnConstruction is too early.
-
 	if ( Hand == EControllerHand::Left )
 	{
 		// Reflect hand mesh
 		HandMesh->SetWorldScale3D( FVector( 1, 1, -1 ) );
 	}	
+
+	// Hide until activation (but wait for BeginPlay so it is shown in editor)
+	TeleportCylinder->SetVisibility( false, true );
 }
 
 AActor* AVRHand::GetActorNearHand()

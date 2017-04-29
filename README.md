@@ -8,10 +8,13 @@ This is a WIP conversion of UE's VR Blueprint template into a C++ project.
 - Hand grip animation
 
 ## Todo
-- Controller rumble
-- Pickup items
-- Teleport
+- Motion controller pawn
+~- Controller rumble
+~- Pickup items
+~- Teleport
+~- Roomscale / Chaperone stuff
 - HMD Locomotion Pawn
+
 
 
 I've started with converting the MotionControllerPawn and MotionControllerMap.
