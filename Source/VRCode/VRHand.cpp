@@ -119,9 +119,10 @@ AActor* AVRHand::GetActorNearHand()
 	// Find closest overlaping actor
 	for ( AActor *actor : overlappingActors )
 	{
-		IPickupable *pickupable = Cast<IPickupable>( actor );
-		if ( pickupable )
+		bool isPickupable = actor->GetClass()->ImplementsInterface( UPickupable::StaticClass() );
+		if ( isPickupable )
 		{
+
 			float dist = ( actor->GetActorLocation() - handLocation ).SizeSquared();
 			if ( dist < mindist )
 			{
@@ -130,6 +131,13 @@ AActor* AVRHand::GetActorNearHand()
 			}
 		}
 	}
+
+	// 	if ( GEngine && Hand == EControllerHand::Right )
+// 		GEngine->AddOnScreenDebugMessage( -1, 0.16f, FColor::Red,
+// 			FString::Printf( TEXT( "Actors near right hand %d, found pickupable: %d, %s" ), 
+// 			overlappingActors.Num(), 
+// 			count,
+// 			nearest ? TEXT( "TRUE" ) : TEXT( "FALSE" ) ) );
 
 	return nearest;
 }
