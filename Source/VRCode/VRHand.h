@@ -82,4 +82,10 @@ public:
 
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Default" )
 	void RumbleController( float intensity );
+
+	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Default" )
+	void GrabActor();
+
+	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Default" )
+	void ReleaseActor();
 };

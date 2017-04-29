@@ -172,6 +172,42 @@ void AVRHand::UpdateAnimationGripState()
 		HandMesh->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 }
 
+void AVRHand::GrabActor_Implementation()
+{
+	WantsToGrip = true;
+
+	AActor *actor = GetActorNearHand();
+	if ( actor && actor->IsValidLowLevel() )
+	{
+		AttachedActor = actor;
+		IPickupable::Execute_Pickup( actor, MotionController );
+		RumbleController( 0.7 );
+	}
+
+}
+
+void AVRHand::ReleaseActor_Implementation()
+{
+	WantsToGrip = false;
+
+	AActor *actor = AttachedActor;
+	if ( actor && actor->IsValidLowLevel() )
+	{
+		// Make sure this hand is still holding the Actor (May have been taken by another hand / event)
+		//    SCLARK39 NOTE:
+		//			This is bad code. Data should not become invalidated in this way. When another 
+		//			hand/event occurs, it should remove the reference as the hand stops holding it so
+		//			it can properly respond to new input.
+		if ( MotionController == actor->GetRootComponent()->GetAttachParent() )
+		{
+			IPickupable::Execute_Drop( actor );
+			RumbleController( 0.2 );
+		}
+	}
+
+	AttachedActor = nullptr;
+}
+
 // Called every frame
 void AVRHand::Tick( float DeltaTime )
 {

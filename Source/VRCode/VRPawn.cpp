@@ -77,7 +77,10 @@ void AVRPawn::UpdateGrip( UChildActorComponent *hand, bool pressed )
 	AVRHand *vrHand = Cast<AVRHand>( hand->GetChildActor() );
 	if ( vrHand )
 	{
-		vrHand->WantsToGrip = pressed;
+		if ( pressed )
+			vrHand->GrabActor();
+		else // released
+			vrHand->ReleaseActor();
 	}
 }
 void AVRPawn::GripLeft()		{ UpdateGrip( LeftHand, true ); }

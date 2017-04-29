@@ -6732,7 +6732,9 @@ declare class VRHand extends Actor {
 	static CreateDefaultSubobject(Name: string, Transient?: boolean, Required?: boolean, Abstract?: boolean): VRHand;
 	UpdateAnimationGripState(): void;
 	RumbleController(intensity: number): void;
+	ReleaseActor(): void;
 	OnComponentBeginOverlap(OverlappedComp: PrimitiveComponent,OtherActor: Actor,OtherComp: PrimitiveComponent,OtherBodyIndex: number,bFromSweep: boolean,SweepResult: HitResult): void;
+	GrabActor(): void;
 	GetActorNearHand(): Actor;
 	static C(Other: UObject): VRHand;
 }
