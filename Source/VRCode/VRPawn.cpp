@@ -79,7 +79,7 @@ void AVRPawn::UpdateGrip( UChildActorComponent *hand, bool pressed )
 	if ( vrHand )
 	{
 		UE_LOG( LogTemp, Warning, TEXT( "Cast success" ) );
-		vrHand->shouldGrip = pressed;
+		vrHand->Grip = pressed? EGripState::Grab : EGripState::Open;
 	}
 }
 void AVRPawn::GripLeft()		{ UpdateGrip( LeftHand, true ); }

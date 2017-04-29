@@ -6691,10 +6691,13 @@ declare class VRCodeGameModeBase extends GameModeBase {
 	static C(Other: UObject): VRCodeGameModeBase;
 }
 
+declare type EGripState = 'Open' | 'CanGrab' | 'Grab';
+declare var EGripState : { Open:'Open',CanGrab:'CanGrab',Grab:'Grab', };
 declare class VRHand extends Actor { 
 	MotionController: MotionControllerComponent;
 	HandMesh: SkeletalMeshComponent;
-	shouldGrip: boolean;
+	GrabSphere: SphereComponent;
+	Grip: EGripState;
 	Hand: EControllerHand;
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
 	static StaticClass: any;
@@ -6703,6 +6706,8 @@ declare class VRHand extends Actor {
 	static GetDefaultSubobjectByName(Name: string): UObject;
 	static SetDefaultSubobjectClass(Name: string): void;
 	static CreateDefaultSubobject(Name: string, Transient?: boolean, Required?: boolean, Abstract?: boolean): VRHand;
+	RumbleController(intensity: number): void;
+	OnComponentBeginOverlap(OverlappedComp: PrimitiveComponent,OtherActor: Actor,OtherComp: PrimitiveComponent,OtherBodyIndex: number,bFromSweep: boolean,SweepResult: HitResult): void;
 	static C(Other: UObject): VRHand;
 }
 
