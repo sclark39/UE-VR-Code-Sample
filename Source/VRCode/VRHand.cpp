@@ -2,6 +2,7 @@
 
 #include "VRCode.h"
 #include "VRHand.h"
+#include "IPickupable.h"
 #include "Runtime/HeadMountedDisplay/Public/MotionControllerComponent.h"
 #include "Runtime/Engine/Classes/Components/SplineComponent.h"
 
@@ -105,10 +106,70 @@ void AVRHand::BeginPlay()
 	}	
 }
 
+AActor* AVRHand::GetActorNearHand()
+{
+	TArray<AActor*> overlappingActors;
+
+	GrabSphere->GetOverlappingActors( overlappingActors );
+	FVector handLocation = GrabSphere->GetComponentLocation();
+
+	AActor* nearest = nullptr;
+	float mindist = 99999999999;
+
+	// Find closest overlaping actor
+	for ( AActor *actor : overlappingActors )
+	{
+		IPickupable *pickupable = Cast<IPickupable>( actor );
+		if ( pickupable )
+		{
+			float dist = ( actor->GetActorLocation() - handLocation ).SizeSquared();
+			if ( dist < mindist )
+			{
+				mindist = dist;
+				nearest = actor;
+			}
+		}
+	}
+
+	return nearest;
+}
+
+void AVRHand::UpdateAnimationGripState()
+{
+	// Default to Open
+	Grip = EGripState::Open;
+
+	if ( AttachedActor )
+	{
+		// If holding an object, always keep fist closed
+		Grip = EGripState::Grab;
+	}
+	else
+	{
+		// React to player input
+		if ( WantsToGrip )
+			Grip = EGripState::Grab;
+
+		// If not holding something, the hand should open or close 
+		// slightly when passing over an interactable object
+		AActor *actor = GetActorNearHand();
+		if ( actor )
+			Grip = EGripState::CanGrab;
+	}
+
+	// Only let hand collide with environment while gripping
+	if ( Grip == EGripState::Grab )
+		HandMesh->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
+	else
+		HandMesh->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+}
+
 // Called every frame
 void AVRHand::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+	UpdateAnimationGripState();
 
 }
 

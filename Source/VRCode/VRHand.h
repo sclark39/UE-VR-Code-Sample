@@ -47,9 +47,14 @@ class VRCODE_API AVRHand : public AActor
 	class UStaticMeshComponent *TeleportArrow;
 
 public:	
-	/** Motion controller (left hand) */
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
+	bool WantsToGrip;
+	
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
 	EGripState Grip;
+
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
+	class AActor *AttachedActor;
 
 	/** Is this the left or right hand */
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
@@ -68,6 +73,12 @@ public:
 	
 	UFUNCTION()
 	void OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult );
+
+	UFUNCTION()
+	AActor* GetActorNearHand();
+
+	UFUNCTION()
+	void UpdateAnimationGripState();
 
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Default" )
 	void RumbleController( float intensity );

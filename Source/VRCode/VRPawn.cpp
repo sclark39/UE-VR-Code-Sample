@@ -74,12 +74,10 @@ void AVRPawn::SetupPlayerInputComponent(class UInputComponent* inputComponent)
 
 void AVRPawn::UpdateGrip( UChildActorComponent *hand, bool pressed )
 {
-	UE_LOG( LogTemp, Warning, TEXT( "Grip input received" ) );
 	AVRHand *vrHand = Cast<AVRHand>( hand->GetChildActor() );
 	if ( vrHand )
 	{
-		UE_LOG( LogTemp, Warning, TEXT( "Cast success" ) );
-		vrHand->Grip = pressed? EGripState::Grab : EGripState::Open;
+		vrHand->WantsToGrip = pressed;
 	}
 }
 void AVRPawn::GripLeft()		{ UpdateGrip( LeftHand, true ); }

@@ -6680,6 +6680,22 @@ declare class UdpMessagingSettings extends UObject {
 	static C(Other: UObject): UdpMessagingSettings;
 }
 
+declare class Pickupable extends Interface { 
+	constructor();
+	constructor(Outer: UObject);
+	static Load(ResourceName: string): Pickupable;
+	static Find(Outer: UObject, ResourceName: string): Pickupable;
+	static StaticClass: any;
+	static GetClassObject(): Class;
+	static GetDefaultObject(): Pickupable;
+	static GetDefaultSubobjectByName(Name: string): UObject;
+	static SetDefaultSubobjectClass(Name: string): void;
+	static CreateDefaultSubobject(Name: string, Transient?: boolean, Required?: boolean, Abstract?: boolean): Pickupable;
+	Pickup(AttachTo: SceneComponent): void;
+	Drop(): void;
+	static C(Other: UObject): Pickupable;
+}
+
 declare class VRCodeGameModeBase extends GameModeBase { 
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
 	static StaticClass: any;
@@ -6703,7 +6719,9 @@ declare class VRHand extends Actor {
 	TeleportCylinder: StaticMeshComponent;
 	TeleportRing: StaticMeshComponent;
 	TeleportArrow: StaticMeshComponent;
+	WantsToGrip: boolean;
 	Grip: EGripState;
+	AttachedActor: Actor;
 	Hand: EControllerHand;
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
 	static StaticClass: any;
@@ -6712,8 +6730,10 @@ declare class VRHand extends Actor {
 	static GetDefaultSubobjectByName(Name: string): UObject;
 	static SetDefaultSubobjectClass(Name: string): void;
 	static CreateDefaultSubobject(Name: string, Transient?: boolean, Required?: boolean, Abstract?: boolean): VRHand;
+	UpdateAnimationGripState(): void;
 	RumbleController(intensity: number): void;
 	OnComponentBeginOverlap(OverlappedComp: PrimitiveComponent,OtherActor: Actor,OtherComp: PrimitiveComponent,OtherBodyIndex: number,bFromSweep: boolean,SweepResult: HitResult): void;
+	GetActorNearHand(): Actor;
 	static C(Other: UObject): VRHand;
 }
 
