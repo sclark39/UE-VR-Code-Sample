@@ -28,6 +28,24 @@ class VRCODE_API AVRHand : public AActor
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
 	class USphereComponent *GrabSphere;
 
+	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+	class USplineComponent *ArcSpline;
+
+	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+	class UArrowComponent *ArcDirection;
+
+	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+	class UStaticMeshComponent *ArcEndPoint;
+
+	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+	class UStaticMeshComponent *TeleportCylinder;
+
+	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+	class UStaticMeshComponent *TeleportRing;
+
+	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+	class UStaticMeshComponent *TeleportArrow;
+
 public:	
 	/** Motion controller (left hand) */
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )

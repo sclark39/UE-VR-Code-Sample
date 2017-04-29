@@ -3,7 +3,7 @@
 #include "VRCode.h"
 #include "VRHand.h"
 #include "Runtime/HeadMountedDisplay/Public/MotionControllerComponent.h"
-
+#include "Runtime/Engine/Classes/Components/SplineComponent.h"
 
 // Sets default values
 AVRHand::AVRHand()
@@ -15,16 +15,34 @@ AVRHand::AVRHand()
 	Grip = EGripState::Open;
 
 	MotionController = CreateDefaultSubobject<UMotionControllerComponent>( TEXT( "MotionController" ) );
-	MotionController->SetupAttachment( RootComponent );
+	//MotionController->SetupAttachment( RootComponent );
 	MotionController->Hand = Hand;
 
 	HandMesh = CreateDefaultSubobject<USkeletalMeshComponent>( TEXT( "HandMesh" ) );
 	HandMesh->SetupAttachment( MotionController );
 
-	//GrabSphere = CreateDefaultSubobject<USphereComponent>( TEXT( "GrabSphere" ) );
-	//GrabSphere->InitSphereRadius( 10.0f );
-	//GrabSphere->OnComponentBeginOverlap.AddDynamic( this, &AVRHand::OnComponentBeginOverlap );
-	//GrabSphere->SetupAttachment( HandMesh );
+	GrabSphere = CreateDefaultSubobject<USphereComponent>( TEXT( "GrabSphere" ) );
+	GrabSphere->SetupAttachment( HandMesh ); 
+	GrabSphere->InitSphereRadius( 10.0f );
+	GrabSphere->OnComponentBeginOverlap.AddDynamic( this, &AVRHand::OnComponentBeginOverlap );
+
+	ArcDirection = CreateDefaultSubobject<UArrowComponent>( TEXT( "ArcDirection" ) );
+	ArcDirection->SetupAttachment( HandMesh );
+
+	ArcSpline = CreateDefaultSubobject<USplineComponent>( TEXT( "ArcSpline" ) );
+	ArcSpline->SetupAttachment( HandMesh );
+
+	ArcEndPoint = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "ArcEndPoint" ) );
+
+	TeleportCylinder = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "TeleportCylinder" ) );
+
+	TeleportRing = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "TeleportRing" ) );
+	TeleportRing->SetupAttachment( TeleportCylinder );
+
+	TeleportArrow = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "TeleportArrow" ) );
+	TeleportArrow->SetupAttachment( TeleportCylinder );
+
+
 
 }
 
@@ -73,8 +91,18 @@ void AVRHand::OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComp, AAct
 void AVRHand::BeginPlay()
 {
 	MotionController->Hand = Hand;
+
 	Super::BeginPlay();
-	
+
+	// HACK FIX: ISSUE UE-41708
+	//   We need to wait until play begins to set the blueprint for the child actor so we 
+	//   also need to do the flip transform in BeginPlay, since OnConstruction is too early.
+
+	if ( Hand == EControllerHand::Left )
+	{
+		// Reflect hand mesh
+		HandMesh->SetWorldScale3D( FVector( 1, 1, -1 ) );
+	}	
 }
 
 // Called every frame

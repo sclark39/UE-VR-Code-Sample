@@ -6697,6 +6697,12 @@ declare class VRHand extends Actor {
 	MotionController: MotionControllerComponent;
 	HandMesh: SkeletalMeshComponent;
 	GrabSphere: SphereComponent;
+	ArcSpline: SplineComponent;
+	ArcDirection: ArrowComponent;
+	ArcEndPoint: StaticMeshComponent;
+	TeleportCylinder: StaticMeshComponent;
+	TeleportRing: StaticMeshComponent;
+	TeleportArrow: StaticMeshComponent;
 	Grip: EGripState;
 	Hand: EControllerHand;
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
