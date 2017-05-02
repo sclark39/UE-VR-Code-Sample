@@ -8,18 +8,18 @@ If you see things that are not to Unreal Engine's coding standard, or know an ea
 
 I want this to be a learning resource that anyone can use, so I am publishing it under the MIT License but if this license causes an issue for you please let me know!
 
-## Implemented in C++
+## Implemented
 - Teleport with Stick Input
 - Pickup and throw physics based objects
 - Create Teleport splines and do traces in C++
 - Create default implementations of all components in C++, to be filled in from Editor
   - Added a workaround for issue UE-41708 in the Blueprint for VRPawn_BP; setting the ChildActorComponent to another code blueprint causes issues in UE4.14 and UE4.15
 
-## Changed Features
+## Changed
 - Teleport changed to be activated/deactivated by stick input like Robo Rally, rather than a seperate button
 - Added a workaround (via a blueprint) to trigger haptic feedback when the rumble event occurs since Touch has no rumble capability
 
-## Missing Features
+## Missing
 - PSVR Controller Roll to Teleport
 - HMD Locomotion Pawn
 - SteamVRChaperone not implemented
