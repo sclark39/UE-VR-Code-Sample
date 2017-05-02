@@ -6696,6 +6696,17 @@ declare class Pickupable extends Interface {
 	static C(Other: UObject): Pickupable;
 }
 
+declare class PickupCube extends Actor { 
+	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
+	static StaticClass: any;
+	static GetClassObject(): Class;
+	static GetDefaultObject(): PickupCube;
+	static GetDefaultSubobjectByName(Name: string): UObject;
+	static SetDefaultSubobjectClass(Name: string): void;
+	static CreateDefaultSubobject(Name: string, Transient?: boolean, Required?: boolean, Abstract?: boolean): PickupCube;
+	static C(Other: UObject): PickupCube;
+}
+
 declare class VRCodeGameModeBase extends GameModeBase { 
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
 	static StaticClass: any;
@@ -6710,6 +6721,7 @@ declare class VRCodeGameModeBase extends GameModeBase {
 declare type EGripState = 'Open' | 'CanGrab' | 'Grab';
 declare var EGripState : { Open:'Open',CanGrab:'CanGrab',Grab:'Grab', };
 declare class VRHand extends Actor { 
+	Scene: SceneComponent;
 	MotionController: MotionControllerComponent;
 	HandMesh: SkeletalMeshComponent;
 	GrabSphere: SphereComponent;
@@ -6720,6 +6732,7 @@ declare class VRHand extends Actor {
 	TeleportRing: StaticMeshComponent;
 	TeleportArrow: StaticMeshComponent;
 	WantsToGrip: boolean;
+	IsTeleporterActive: boolean;
 	Grip: EGripState;
 	AttachedActor: Actor;
 	Hand: EControllerHand;
@@ -6744,6 +6757,7 @@ declare class VRPawn extends Pawn {
 	Camera: CameraComponent;
 	LeftHand: ChildActorComponent;
 	RightHand: ChildActorComponent;
+	DeviceType: number;
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
 	static StaticClass: any;
 	static GetClassObject(): Class;
@@ -6751,6 +6765,7 @@ declare class VRPawn extends Pawn {
 	static GetDefaultSubobjectByName(Name: string): UObject;
 	static SetDefaultSubobjectClass(Name: string): void;
 	static CreateDefaultSubobject(Name: string, Transient?: boolean, Required?: boolean, Abstract?: boolean): VRPawn;
+	ExecuteTeleport(): void;
 	static C(Other: UObject): VRPawn;
 }
 

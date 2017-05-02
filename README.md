@@ -13,6 +13,7 @@ This is a WIP conversion of UE's VR Blueprint template into a C++ project.
 ~- Pickup items
 ~- Teleport
 ~- Roomscale / Chaperone stuff
+~- Improve inefficiency of deleting/recreating spline
 - HMD Locomotion Pawn
 
 

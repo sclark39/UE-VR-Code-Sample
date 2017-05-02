@@ -23,7 +23,14 @@ class VRCODE_API AVRPawn : public APawn
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UChildActorComponent *RightHand;
 
+	void HandleStickInputStyleTeleportActivation( FVector2D AxisInput, class AVRHand *Current, class AVRHand *Other );
+	bool GetRotationFromInput( FVector2D AxisInput, FRotator &OrientRotator );
+
 public:
+
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
+	uint8 DeviceType;
+
 	// Sets default values for this pawn's properties
 	AVRPawn();
 
@@ -34,7 +41,7 @@ public:
 	virtual void Tick( float DeltaSeconds ) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+	virtual void SetupPlayerInputComponent( class UInputComponent* InputComponent ) override;
 	
 	void UpdateGrip( UChildActorComponent *hand, bool pressed );
 
@@ -42,5 +49,10 @@ public:
 	void StopGripLeft();
 	void GripRight();
 	void StopGripRight();
+
+
+	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Default" )
+	void ExecuteTeleport();
+
 	
 };

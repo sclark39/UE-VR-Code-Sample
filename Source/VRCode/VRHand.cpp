@@ -5,10 +5,16 @@
 #include "IPickupable.h"
 #include "Runtime/HeadMountedDisplay/Public/MotionControllerComponent.h"
 #include "Runtime/Engine/Classes/Components/SplineComponent.h"
+#include "Runtime/HeadMountedDisplay/Public/IHeadMountedDisplay.h"
+#include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
+#include "Runtime/Engine/Classes/Kismet/HeadMountedDisplayFunctionLibrary.h"
 
 // Sets default values
-AVRHand::AVRHand()
+AVRHand::AVRHand() :
+	kExtents( 500, 500, 500 )
 {
+
+
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -220,5 +226,106 @@ void AVRHand::Tick( float DeltaTime )
 
 	UpdateAnimationGripState();
 
+	if ( IsTeleporterActive )
+	{
+		TArray<FVector> TracePoints;
+		FVector NavLocation;
+		FVector HitLocation;
+		bool IsValidTeleportDestination = TraceTeleportDestination( TracePoints, NavLocation, HitLocation );
+
+		TeleportCylinder->SetVisibility( IsValidTeleportDestination, true );
+
+		if ( IsValidTeleportDestination )
+		{
+			// Find Floor at Teleport Location and Move Cylinder
+			FHitResult OutHit;
+			FVector EndPos = NavLocation - FVector( 0, 0, -200 );
+			FCollisionQueryParams CollisionQueryParams( FName( TEXT( "TeleporterDrop" ) ), false, this );
+
+			GetWorld()->LineTraceSingleByChannel( OutHit, NavLocation, EndPos, ECC_WorldStatic, CollisionQueryParams );
+
+			FVector TeleportCylinderLocation;
+			if ( OutHit.bBlockingHit )
+				TeleportCylinderLocation = OutHit.ImpactPoint;
+			else
+				TeleportCylinderLocation = NavLocation;
+
+			TeleportCylinder->SetWorldLocation( TeleportCylinderLocation, false, nullptr, ETeleportType::TeleportPhysics );
+
+			// Rotate Arrow
+			FRotator ArrowRotator = TeleportRotator;
+
+ 			IHeadMountedDisplay *hmd = GEngine->HMDDevice.Get();
+			if ( hmd )
+			{
+				FRotator DeviceRotation;
+				FVector DevicePosition;
+				UHeadMountedDisplayFunctionLibrary::GetOrientationAndPosition( DeviceRotation, DevicePosition );
+
+				DeviceRotation.Pitch = 0;
+				DeviceRotation.Roll = 0;
+
+				ArrowRotator = UKismetMathLibrary::ComposeRotators( TeleportRotator, DeviceRotation );
+			}
+
+			TeleportArrow->SetWorldRotation( ArrowRotator );
+		}
+
+		// If it changed, rumble.
+		if ( LastIsValidTeleportDestination != IsValidTeleportDestination )
+			RumbleController( 0.3 );
+		LastIsValidTeleportDestination = IsValidTeleportDestination;
+	}
+	
 }
 
+void AVRHand::ActivateTeleporter()
+{
+	IsTeleporterActive = true;
+}
+
+
+void AVRHand::DisableTeleporter()
+{
+	IsTeleporterActive = false;
+	TeleportCylinder->SetVisibility( false, true );
+	// TODO: Roomscale Mesh
+}
+
+bool AVRHand::TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &NavMeshLocation, FVector &TraceLocation )
+{
+
+	FVector StartPos = ArcDirection->GetComponentLocation();
+	FVector LaunchVelocity = ArcDirection->GetForwardVector();
+
+	LaunchVelocity *= kTeleportLaunchVelocity;
+
+	// Predict Projectile Path
+	FHitResult OutHit;
+	TArray<FVector> OutPathPositions;
+	FVector OutLastTraceDestination;
+	TArray<AActor*> ActorsToIgnore;
+	TArray<TEnumAsByte<EObjectTypeQuery> > ObjectTypes;
+	ObjectTypes.Push( 
+		UEngineTypes::ConvertToObjectType( ECC_WorldStatic )
+	);
+	const bool DidPredictPath = UGameplayStatics::PredictProjectilePath( GetWorld(), OutHit, OutPathPositions, OutLastTraceDestination,
+		StartPos, LaunchVelocity, true, 0, ObjectTypes, false, ActorsToIgnore,
+		EDrawDebugTrace::Type::None, 0 );
+	if ( !DidPredictPath )
+		return false;
+
+	// Getting Projected Endpoint
+	FVector PointToProject = OutHit.Location;
+	FNavLocation ProjectedHitLocation; 
+	UNavigationSystem *NavSystem = GetWorld()->GetNavigationSystem();
+	const bool DidProjectToNav = NavSystem->ProjectPointToNavigation( PointToProject, ProjectedHitLocation, kExtents );
+	if ( !DidProjectToNav )
+		return false;
+
+	// Outputs...
+	TracePoints = OutPathPositions;
+	TraceLocation = OutHit.Location;
+	NavMeshLocation = ProjectedHitLocation.Location;	
+	return true;
+}

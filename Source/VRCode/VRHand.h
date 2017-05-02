@@ -50,9 +50,16 @@ class VRCODE_API AVRHand : public AActor
 	class UStaticMeshComponent *TeleportArrow;
 
 public:	
+
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
 	bool WantsToGrip;
-	
+
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
+	bool IsTeleporterActive;
+
+	FRotator TeleportRotator;
+	bool LastIsValidTeleportDestination;
+
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
 	EGripState Grip;
 
@@ -62,6 +69,9 @@ public:
 	/** Is this the left or right hand */
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
 	EControllerHand Hand;
+
+	const float kTeleportLaunchVelocity = 900;
+	const FVector kExtents;
 
 	// Sets default values for this actor's properties
 	AVRHand();
@@ -91,4 +101,11 @@ public:
 
 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Default" )
 	void ReleaseActor();
+
+	void ActivateTeleporter();
+	void DisableTeleporter();
+
+	void GetTeleportDestination( FVector &Position, FRotator &Rotator );
+	bool TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &NavMeshLocation, FVector &TraceLocation );
+
 };
