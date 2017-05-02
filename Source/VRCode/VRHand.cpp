@@ -298,8 +298,12 @@ void AVRHand::Tick( float DeltaTime )
 					USplineMeshComponent *SplineMeshComponent = NewObject<USplineMeshComponent>( this, USplineMeshComponent::StaticClass() );
 					SplineMeshComponent->SetStaticMesh( BeamMesh );
 					SplineMeshComponent->SetMaterial( 0, BeamMaterial );
+					SplineMeshComponent->SetStartScale( FVector2D( 4, 4 ) );
+					SplineMeshComponent->SetEndScale( FVector2D( 4, 4 ) );
+					SplineMeshComponent->SetBoundaryMax( 1 );
 
 					SplineMeshComponent->SetStartAndEnd( StartPos, StartTangent, EndPos, EndTangent );
+
 
 					SplineMeshes.Push( SplineMeshComponent );
 				}
