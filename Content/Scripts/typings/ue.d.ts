@@ -6734,8 +6734,8 @@ declare class VRHand extends Actor {
 	BeamMesh: StaticMesh;
 	BeamMaterial: Material;
 	Hand: EControllerHand;
-	kTeleportLaunchVelocity: number;
-	kExtents: Vector;
+	TeleportLaunchVelocity: number;
+	Extents: Vector;
 	WantsToGrip: boolean;
 	IsTeleporterActive: boolean;
 	Grip: EGripState;
@@ -6759,9 +6759,9 @@ declare class VRPawn extends Pawn {
 	Camera: CameraComponent;
 	LeftHand: ChildActorComponent;
 	RightHand: ChildActorComponent;
-	kFadeInDuration: number;
-	kFadeOutDuration: number;
-	kTeleportFadeColor: LinearColor;
+	FadeInDuration: number;
+	FadeOutDuration: number;
+	TeleportFadeColor: LinearColor;
 	ThumbDeadzone: number;
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
 	static StaticClass: any;

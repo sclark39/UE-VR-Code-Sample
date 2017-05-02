@@ -332,8 +332,16 @@ void AVRHand::ActivateTeleporter()
 void AVRHand::DisableTeleporter()
 {
 	IsTeleporterActive = false;
+	
 	TeleportCylinder->SetVisibility( false, true );
 	ArcEndPoint->SetVisibility( false );
+
+	// Destroy old Spline
+	for ( USplineMeshComponent *SplineMesh : SplineMeshes )
+		SplineMesh->DestroyComponent();
+	SplineMeshes.Reset();
+	ArcSpline->ClearSplinePoints();
+
 	// TODO: Roomscale Mesh
 }
 
