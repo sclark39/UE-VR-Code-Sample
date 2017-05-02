@@ -6,6 +6,8 @@ I have an Oculus Rift, so I made the teleport work more like Robo Rally. There a
 
 If you see things that are not to Unreal Engine's coding standard, or know an easier way to accomplish anything please let me know or do a pull request!
 
+I want this to be a learning resource that anyone can use, so I am publishing it under the MIT License but if this license causes an issue for you please let me know!
+
 ## Implemented in C++
 - Teleport with Stick Input
 - Pickup and throw physics based objects
@@ -23,3 +25,4 @@ If you see things that are not to Unreal Engine's coding standard, or know an ea
 - SteamVRChaperone not implemented
 - RoomScaleMesh not implememented
 - Rumble not implemented
+
