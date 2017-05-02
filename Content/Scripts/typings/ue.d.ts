@@ -6731,6 +6731,8 @@ declare class VRHand extends Actor {
 	TeleportCylinder: StaticMeshComponent;
 	TeleportRing: StaticMeshComponent;
 	TeleportArrow: StaticMeshComponent;
+	BeamMesh: StaticMesh;
+	BeamMaterial: Material;
 	WantsToGrip: boolean;
 	IsTeleporterActive: boolean;
 	Grip: EGripState;

@@ -49,7 +49,15 @@ class VRCODE_API AVRHand : public AActor
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
 	class UStaticMeshComponent *TeleportArrow;
 
+	
+	TArray<class USplineMeshComponent*> SplineMeshes;
 public:	
+
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
+	class UStaticMesh *BeamMesh;
+
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
+	class UMaterial *BeamMaterial;
 
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
 	bool WantsToGrip;

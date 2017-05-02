@@ -8,6 +8,7 @@
 #include "Runtime/HeadMountedDisplay/Public/IHeadMountedDisplay.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/HeadMountedDisplayFunctionLibrary.h"
+#include "Runtime/Engine/Classes/Components/SplineMeshComponent.h"
 
 // Sets default values
 AVRHand::AVRHand() :
@@ -205,10 +206,6 @@ void AVRHand::ReleaseActor_Implementation()
 	if ( actor && actor->IsValidLowLevel() )
 	{
 		// Make sure this hand is still holding the Actor (May have been taken by another hand / event)
-		//    SCLARK39 NOTE:
-		//			This is bad code. Data should not become invalidated in this way. When another 
-		//			hand/event occurs, it should remove the reference as the hand stops holding it so
-		//			it can properly respond to new input.
 		if ( MotionController == actor->GetRootComponent()->GetAttachParent() )
 		{
 			IPickupable::Execute_Drop( actor );
@@ -239,10 +236,11 @@ void AVRHand::Tick( float DeltaTime )
 		{
 			// Find Floor at Teleport Location and Move Cylinder
 			FHitResult OutHit;
-			FVector EndPos = NavLocation - FVector( 0, 0, -200 );
-			FCollisionQueryParams CollisionQueryParams( FName( TEXT( "TeleporterDrop" ) ), false, this );
-
-			GetWorld()->LineTraceSingleByChannel( OutHit, NavLocation, EndPos, ECC_WorldStatic, CollisionQueryParams );
+			{
+				FVector EndPos = NavLocation - FVector( 0, 0, -200 );
+				FCollisionQueryParams CollisionQueryParams( FName( TEXT( "TeleporterDrop" ) ), false, this );
+				GetWorld()->LineTraceSingleByChannel( OutHit, NavLocation, EndPos, ECC_WorldStatic, CollisionQueryParams );
+			}
 
 			FVector TeleportCylinderLocation;
 			if ( OutHit.bBlockingHit )
@@ -251,6 +249,9 @@ void AVRHand::Tick( float DeltaTime )
 				TeleportCylinderLocation = NavLocation;
 
 			TeleportCylinder->SetWorldLocation( TeleportCylinderLocation, false, nullptr, ETeleportType::TeleportPhysics );
+
+			ArcEndPoint->SetVisibility( true );
+			ArcEndPoint->SetWorldLocation( HitLocation, false, nullptr, ETeleportType::TeleportPhysics );
 
 			// Rotate Arrow
 			FRotator ArrowRotator = TeleportRotator;
@@ -269,6 +270,45 @@ void AVRHand::Tick( float DeltaTime )
 			}
 
 			TeleportArrow->SetWorldRotation( ArrowRotator );
+
+			
+			// Destroy old Spline
+			for ( USplineMeshComponent *SplineMesh : SplineMeshes )
+				SplineMesh->DestroyComponent();
+			SplineMeshes.Reset();
+			ArcSpline->ClearSplinePoints();
+
+			// Make Spline....
+			if ( TracePoints.Num() > 0 )
+			{
+				for ( FVector TracePoint : TracePoints )
+				{
+					ArcSpline->AddSplinePoint( TracePoint, ESplineCoordinateSpace::Local, true );
+				}
+				ArcSpline->SetSplinePointType( TracePoints.Num() - 1, ESplinePointType::CurveClamped, true );
+
+				for ( int i = 0; i < TracePoints.Num() - 2; i++ )
+				{
+					FVector StartPos = TracePoints[i];
+					FVector StartTangent = ArcSpline->GetTangentAtSplinePoint( i, ESplineCoordinateSpace::Local );
+
+					FVector EndPos = TracePoints[i + 1];
+					FVector EndTangent = ArcSpline->GetTangentAtSplinePoint( i + 1, ESplineCoordinateSpace::Local );
+
+					USplineMeshComponent *SplineMeshComponent = NewObject<USplineMeshComponent>( this, USplineMeshComponent::StaticClass() );
+					SplineMeshComponent->SetStaticMesh( BeamMesh );
+					SplineMeshComponent->SetMaterial( 0, BeamMaterial );
+
+					SplineMeshComponent->SetStartAndEnd( StartPos, StartTangent, EndPos, EndTangent );
+
+					SplineMeshes.Push( SplineMeshComponent );
+				}
+				RegisterAllComponents();
+
+
+			}
+
+			
 		}
 
 		// If it changed, rumble.
@@ -289,6 +329,7 @@ void AVRHand::DisableTeleporter()
 {
 	IsTeleporterActive = false;
 	TeleportCylinder->SetVisibility( false, true );
+	ArcEndPoint->SetVisibility( false );
 	// TODO: Roomscale Mesh
 }
 
