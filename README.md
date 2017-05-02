@@ -13,7 +13,7 @@ I want this to be a learning resource that anyone can use, so I am publishing it
 - Pickup and throw physics based objects
 - Create Teleport splines and do traces in C++
 - Create default implementations of all components in C++, to be filled in from Editor
-⋅⋅- Added a workaround for issue UE-41708 in the Blueprint for VRPawn_BP, setting the ChildActorComponent to another code blueprint causes issues in UE4.14 and UE4.15
+⋅⋅* Added a workaround for issue UE-41708 in the Blueprint for VRPawn_BP, setting the ChildActorComponent to another code blueprint causes issues in UE4.14 and UE4.15
 
 ## Changed Features
 - Teleport changed to be activated/deactivated by stick input like Robo Rally, rather than a seperate button
