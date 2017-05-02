@@ -11,16 +11,16 @@ class VRCODE_API AVRPawn : public APawn
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Code Components", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent *VROrigin;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Code Components", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent *Camera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Code Components", meta = (AllowPrivateAccess = "true"))
 	class UChildActorComponent *LeftHand;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Code Components", meta = (AllowPrivateAccess = "true"))
 	class UChildActorComponent *RightHand;
 
 	void HandleStickInputStyleTeleportActivation( FVector2D AxisInput, class AVRHand *Current, class AVRHand *Other );
@@ -28,9 +28,19 @@ class VRCODE_API AVRPawn : public APawn
 
 public:
 
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
-	uint8 DeviceType;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
+	float FadeInDuration = 0.1;
 
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
+	float FadeOutDuration = 0.1;
+
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
+	FLinearColor TeleportFadeColor = FLinearColor::Black;
+
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
+	float ThumbDeadzone = 0.7;
+
+	uint8 DeviceType;
 	bool IsTeleporting;
 
 	// Sets default values for this pawn's properties

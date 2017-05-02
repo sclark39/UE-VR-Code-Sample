@@ -6733,11 +6733,13 @@ declare class VRHand extends Actor {
 	TeleportArrow: StaticMeshComponent;
 	BeamMesh: StaticMesh;
 	BeamMaterial: Material;
+	Hand: EControllerHand;
+	kTeleportLaunchVelocity: number;
+	kExtents: Vector;
 	WantsToGrip: boolean;
 	IsTeleporterActive: boolean;
 	Grip: EGripState;
 	AttachedActor: Actor;
-	Hand: EControllerHand;
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
 	static StaticClass: any;
 	static GetClassObject(): Class;
@@ -6745,12 +6747,10 @@ declare class VRHand extends Actor {
 	static GetDefaultSubobjectByName(Name: string): UObject;
 	static SetDefaultSubobjectClass(Name: string): void;
 	static CreateDefaultSubobject(Name: string, Transient?: boolean, Required?: boolean, Abstract?: boolean): VRHand;
-	UpdateAnimationGripState(): void;
 	RumbleController(intensity: number): void;
 	ReleaseActor(): void;
 	OnComponentBeginOverlap(OverlappedComp: PrimitiveComponent,OtherActor: Actor,OtherComp: PrimitiveComponent,OtherBodyIndex: number,bFromSweep: boolean,SweepResult: HitResult): void;
 	GrabActor(): void;
-	GetActorNearHand(): Actor;
 	static C(Other: UObject): VRHand;
 }
 
@@ -6759,7 +6759,10 @@ declare class VRPawn extends Pawn {
 	Camera: CameraComponent;
 	LeftHand: ChildActorComponent;
 	RightHand: ChildActorComponent;
-	DeviceType: number;
+	kFadeInDuration: number;
+	kFadeOutDuration: number;
+	kTeleportFadeColor: LinearColor;
+	ThumbDeadzone: number;
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
 	static StaticClass: any;
 	static GetClassObject(): Class;

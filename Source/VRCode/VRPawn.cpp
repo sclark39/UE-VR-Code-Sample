@@ -56,9 +56,6 @@ void AVRPawn::BeginPlay()
 
 void AVRPawn::FinishTeleport( AVRHand *Current, const FVector &TeleportPosition, const FRotator &TeleportRotator )
 {
-	const float kFadeInDuration = 0.1;
-	const FLinearColor kTeleportFadeColor = FLinearColor::Black;
-
 	Current->DisableTeleporter();
 
 	// Move the player
@@ -66,7 +63,7 @@ void AVRPawn::FinishTeleport( AVRHand *Current, const FVector &TeleportPosition,
 
 	// Fade back in
 	APlayerCameraManager *PlayerCamera = UGameplayStatics::GetPlayerCameraManager( GetWorld(), 0 );
-	PlayerCamera->StartCameraFade( 1, 0, kFadeInDuration, kTeleportFadeColor, false, true );
+	PlayerCamera->StartCameraFade( 1, 0, FadeInDuration, TeleportFadeColor, false, true );
 
 	// All done.
 	IsTeleporting = false;
@@ -74,9 +71,6 @@ void AVRPawn::FinishTeleport( AVRHand *Current, const FVector &TeleportPosition,
 
 void AVRPawn::ExecuteTeleport( AVRHand *Current )
 {
-	const float kFadeOutDuration = 0.1;
-	const FLinearColor kTeleportFadeColor = FLinearColor::Black;
-
 	if ( IsTeleporting )
 		return;
 
@@ -96,20 +90,18 @@ void AVRPawn::ExecuteTeleport( AVRHand *Current )
 
 	// Fade out screen
 	APlayerCameraManager *PlayerCamera = UGameplayStatics::GetPlayerCameraManager( GetWorld(), 0 );
-	PlayerCamera->StartCameraFade( 0, 1, kFadeOutDuration, kTeleportFadeColor, false, true );
+	PlayerCamera->StartCameraFade( 0, 1, FadeOutDuration, TeleportFadeColor, false, true );
 	
 	// Wait for Fade to complete before continuing the teleport
 	FTimerHandle TimerHandle;
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindUFunction( this, FName( TEXT( "FinishTeleport" ) ), Current, TeleportPosition, TeleportRotator );
-	GetWorldTimerManager().SetTimer( TimerHandle, TimerDelegate, kFadeOutDuration, false );
+	GetWorldTimerManager().SetTimer( TimerHandle, TimerDelegate, FadeOutDuration, false );
 }
 
 void AVRPawn::HandleStickInputStyleTeleportActivation( FVector2D AxisInput, AVRHand *Current, AVRHand *Other )
 {
-	const float ThumbDeadzone = 0.7;
 	const float ThumbDeadzoneSq = ThumbDeadzone * ThumbDeadzone;
-
 	if ( AxisInput.SizeSquared() > ThumbDeadzoneSq )
 	{
 		if ( Current )
@@ -126,12 +118,9 @@ void AVRPawn::HandleStickInputStyleTeleportActivation( FVector2D AxisInput, AVRH
 
 bool AVRPawn::GetRotationFromInput( FVector2D AxisInput, FRotator &OrientRotator )
 {
-	const float ThumbDeadzone = 0.7;
-
 	FRotator ActorRotator = GetActorRotation();
 	ActorRotator.Roll = 0;
 	ActorRotator.Pitch = 0;
-
 
 	const float ThumbDeadzoneSq = ThumbDeadzone * ThumbDeadzone;
 	if ( AxisInput.SizeSquared() > ThumbDeadzoneSq )

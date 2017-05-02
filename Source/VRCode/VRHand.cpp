@@ -12,7 +12,7 @@
 
 // Sets default values
 AVRHand::AVRHand() :
-	kExtents( 500, 500, 500 )
+	Extents( 500, 500, 500 )
 {
 
 
@@ -237,7 +237,7 @@ void AVRHand::Tick( float DeltaTime )
 			// Find Floor at Teleport Location and Move Cylinder
 			FHitResult OutHit;
 			{
-				FVector EndPos = NavLocation - FVector( 0, 0, -200 );
+				FVector EndPos = NavLocation + FVector( 0, 0, -200 );
 				FCollisionQueryParams CollisionQueryParams( FName( TEXT( "TeleporterDrop" ) ), false, this );
 				GetWorld()->LineTraceSingleByChannel( OutHit, NavLocation, EndPos, ECC_WorldStatic, CollisionQueryParams );
 			}
@@ -343,7 +343,7 @@ bool AVRHand::TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &N
 	FVector StartPos = ArcDirection->GetComponentLocation();
 	FVector LaunchVelocity = ArcDirection->GetForwardVector();
 
-	LaunchVelocity *= kTeleportLaunchVelocity;
+	LaunchVelocity *= TeleportLaunchVelocity;
 
 	// Predict Projectile Path
 	FHitResult OutHit;
@@ -364,7 +364,7 @@ bool AVRHand::TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &N
 	FVector PointToProject = OutHit.Location;
 	FNavLocation ProjectedHitLocation; 
 	UNavigationSystem *NavSystem = GetWorld()->GetNavigationSystem();
-	const bool DidProjectToNav = NavSystem->ProjectPointToNavigation( PointToProject, ProjectedHitLocation, kExtents );
+	const bool DidProjectToNav = NavSystem->ProjectPointToNavigation( PointToProject, ProjectedHitLocation, Extents );
 	if ( !DidProjectToNav )
 		return false;
 
