@@ -106,7 +106,7 @@ public:
 	void ActivateTeleporter();
 	void DisableTeleporter();
 
-	void GetTeleportDestination( FVector &Position, FRotator &Rotator );
+	void GetTeleportDestination( FVector &OutPosition, FRotator &OutRotator );
 	bool TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &NavMeshLocation, FVector &TraceLocation );
 
 };

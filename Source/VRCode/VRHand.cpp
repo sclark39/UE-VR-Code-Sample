@@ -329,3 +329,22 @@ bool AVRHand::TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &N
 	NavMeshLocation = ProjectedHitLocation.Location;	
 	return true;
 }
+
+
+void AVRHand::GetTeleportDestination( FVector &OutPosition, FRotator &OutRotator )
+{
+	IHeadMountedDisplay *hmd = GEngine->HMDDevice.Get();
+	FVector DevicePosition(ForceInitToZero);
+	if ( hmd )
+	{
+		FRotator DeviceRotation;
+		UHeadMountedDisplayFunctionLibrary::GetOrientationAndPosition( DeviceRotation, DevicePosition );
+		DevicePosition.Z = 0; // Ignore relative height difference
+	}
+
+	DevicePosition = TeleportRotator.RotateVector( DevicePosition );
+
+	// Substract HMD origin (Camera) to get correct Pawn destination for teleportation.
+	OutPosition = TeleportCylinder->GetComponentLocation() - DevicePosition;
+	OutRotator = TeleportRotator;
+}

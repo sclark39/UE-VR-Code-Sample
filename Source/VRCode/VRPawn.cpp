@@ -54,19 +54,21 @@ void AVRPawn::BeginPlay()
 
 }
 
-void AVRPawn::FinishTeleport( AVRHand *Current )
+void AVRPawn::FinishTeleport( AVRHand *Current, const FVector &TeleportPosition, const FRotator &TeleportRotator )
 {
 	const float kFadeInDuration = 0.1;
 	const FLinearColor kTeleportFadeColor = FLinearColor::Black;
 
 	Current->DisableTeleporter();
 
-	// TELEPORT!
+	// Move the player
+	TeleportTo( TeleportPosition, TeleportRotator, false, false );
 
-
+	// Fade back in
 	APlayerCameraManager *PlayerCamera = UGameplayStatics::GetPlayerCameraManager( GetWorld(), 0 );
 	PlayerCamera->StartCameraFade( 1, 0, kFadeInDuration, kTeleportFadeColor, false, true );
 
+	// All done.
 	IsTeleporting = false;
 }
 
@@ -78,24 +80,28 @@ void AVRPawn::ExecuteTeleport( AVRHand *Current )
 	if ( IsTeleporting )
 		return;
 
-	FVector Position;
-	FRotator Rotation;
+	// 	if ( !Current->HasValidTeleportLocation )
+	// 	{
+	// 		Current->DisableTeleporter();
+	// 		return;
+	// 	}
 
-// 	if ( !Current->HasValidTeleportLocation )
-// 	{
-// 		Current->DisableTeleporter();
-// 		return;
-// 	}
+	FVector TeleportPosition;
+	FRotator TeleportRotator;
 
+	Current->GetTeleportDestination( TeleportPosition, TeleportRotator );
+
+	// We're doing this!
 	IsTeleporting = true;
 
+	// Fade out screen
 	APlayerCameraManager *PlayerCamera = UGameplayStatics::GetPlayerCameraManager( GetWorld(), 0 );
 	PlayerCamera->StartCameraFade( 0, 1, kFadeOutDuration, kTeleportFadeColor, false, true );
 	
+	// Wait for Fade to complete before continuing the teleport
 	FTimerHandle TimerHandle;
 	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindUFunction( this, FName( TEXT( "FinishTeleport" ) ), Current );
-
+	TimerDelegate.BindUFunction( this, FName( TEXT( "FinishTeleport" ) ), Current, TeleportPosition, TeleportRotator );
 	GetWorldTimerManager().SetTimer( TimerHandle, TimerDelegate, kFadeOutDuration, false );
 }
 
@@ -126,12 +132,11 @@ bool AVRPawn::GetRotationFromInput( FVector2D AxisInput, FRotator &OrientRotator
 	ActorRotator.Roll = 0;
 	ActorRotator.Pitch = 0;
 
+
 	const float ThumbDeadzoneSq = ThumbDeadzone * ThumbDeadzone;
 	if ( AxisInput.SizeSquared() > ThumbDeadzoneSq )
 	{
-		// Needed to alternate the inputs because the Y is forward, on the thumb stick, and X is forward with rotators...
-		// I think this math could be made more clear.
-		FVector InputVector( AxisInput.Y, AxisInput.X, 0 ); 
+		FVector InputVector( AxisInput, 0 ); 
 		InputVector.Normalize();
 		InputVector = ActorRotator.RotateVector( InputVector );
 
@@ -152,14 +157,14 @@ void AVRPawn::Tick( float DeltaTime )
 	{
 		AVRHand *Left = Cast<AVRHand>( LeftHand->GetChildActor() );
 		FVector2D ThumbLeft(
-			InputComponent->GetAxisValue( "MotionControllerThumbLeft_X" ),
-			InputComponent->GetAxisValue( "MotionControllerThumbLeft_Y" )
+			InputComponent->GetAxisValue( TEXT( "ThumbLeft_Fwd" ) ),
+			InputComponent->GetAxisValue( TEXT( "ThumbLeft_Side" ) )
 		);
 
 		AVRHand *Right = Cast<AVRHand>( RightHand->GetChildActor() );
 		FVector2D ThumbRight(
-			InputComponent->GetAxisValue( "MotionControllerThumbRight_X" ),
-			InputComponent->GetAxisValue( "MotionControllerThumbRight_Y" )
+			InputComponent->GetAxisValue( TEXT( "ThumbRight_Fwd" ) ),
+			InputComponent->GetAxisValue( TEXT( "ThumbRight_Side" ) )
 		);
 
 		// Robo Rally style Teleport Activation
@@ -174,14 +179,16 @@ void AVRPawn::Tick( float DeltaTime )
 
 		if ( Left->IsTeleporterActive )
 		{
-			GetRotationFromInput( ThumbLeft, OrientRotator );
-			Left->TeleportRotator = OrientRotator;
+			// Robo Rally style, don't change teleport rotator when releasing the stick
+			if ( GetRotationFromInput( ThumbLeft, OrientRotator ) )
+				Left->TeleportRotator = OrientRotator; 
 		}
 
 		if ( Right->IsTeleporterActive )
 		{
-			GetRotationFromInput( ThumbRight, OrientRotator );
-			Right->TeleportRotator = OrientRotator;
+			// Robo Rally style, don't change teleport rotator when releasing the stick
+			if ( GetRotationFromInput( ThumbRight, OrientRotator ) )
+				Right->TeleportRotator = OrientRotator;
 		}
 
 	}
@@ -199,11 +206,11 @@ void AVRPawn::SetupPlayerInputComponent( class UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction( "GripRight", IE_Pressed, this, &AVRPawn::GripRight );
 	PlayerInputComponent->BindAction( "GripRight", IE_Released, this, &AVRPawn::StopGripRight );
 
-	PlayerInputComponent->BindAxis( TEXT( "MotionControllerThumbLeft_X" ) );
-	PlayerInputComponent->BindAxis( TEXT( "MotionControllerThumbLeft_Y" ) );
+	PlayerInputComponent->BindAxis( TEXT( "ThumbLeft_Fwd" ) );
+	PlayerInputComponent->BindAxis( TEXT( "ThumbRight_Fwd" ) );
 
-	PlayerInputComponent->BindAxis( TEXT( "MotionControllerThumbRight_X" ) );
-	PlayerInputComponent->BindAxis( TEXT( "MotionControllerThumbRight_Y" ) );
+	PlayerInputComponent->BindAxis( TEXT( "ThumbLeft_Side" ) );
+	PlayerInputComponent->BindAxis( TEXT( "ThumbRight_Side" ) );
 }
 
 void AVRPawn::UpdateGrip( UChildActorComponent *hand, bool pressed )

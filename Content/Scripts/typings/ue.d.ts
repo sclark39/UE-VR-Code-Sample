@@ -6765,7 +6765,7 @@ declare class VRPawn extends Pawn {
 	static GetDefaultSubobjectByName(Name: string): UObject;
 	static SetDefaultSubobjectClass(Name: string): void;
 	static CreateDefaultSubobject(Name: string, Transient?: boolean, Required?: boolean, Abstract?: boolean): VRPawn;
-	ExecuteTeleport(): void;
+	FinishTeleport(Current: VRHand,TeleportPosition: Vector,TeleportRotator: Rotator): void;
 	static C(Other: UObject): VRPawn;
 }
 

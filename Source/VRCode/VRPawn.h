@@ -53,7 +53,7 @@ public:
 	void StopGripRight();
 
 	UFUNCTION()
-	void FinishTeleport( class AVRHand *Current );
+	void FinishTeleport( class AVRHand *Current, const FVector &TeleportPosition, const FRotator &TeleportRotator );
 
 	void ExecuteTeleport( class AVRHand *Current );
 
