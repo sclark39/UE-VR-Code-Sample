@@ -6697,6 +6697,7 @@ declare class Pickupable extends Interface {
 }
 
 declare class PickupCube extends Actor { 
+	StaticMeshComponent: StaticMeshComponent;
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
 	static StaticClass: any;
 	static GetClassObject(): Class;
