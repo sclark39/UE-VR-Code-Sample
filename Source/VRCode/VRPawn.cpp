@@ -54,9 +54,49 @@ void AVRPawn::BeginPlay()
 
 }
 
-void AVRPawn::ExecuteTeleport_Implementation()
+void AVRPawn::FinishTeleport( AVRHand *Current )
 {
+	const float kFadeInDuration = 0.1;
+	const FLinearColor kTeleportFadeColor = FLinearColor::Black;
 
+	Current->DisableTeleporter();
+
+	// TELEPORT!
+
+
+	APlayerCameraManager *PlayerCamera = UGameplayStatics::GetPlayerCameraManager( GetWorld(), 0 );
+	PlayerCamera->StartCameraFade( 1, 0, kFadeInDuration, kTeleportFadeColor, false, true );
+
+	IsTeleporting = false;
+}
+
+void AVRPawn::ExecuteTeleport( AVRHand *Current )
+{
+	const float kFadeOutDuration = 0.1;
+	const FLinearColor kTeleportFadeColor = FLinearColor::Black;
+
+	if ( IsTeleporting )
+		return;
+
+	FVector Position;
+	FRotator Rotation;
+
+// 	if ( !Current->HasValidTeleportLocation )
+// 	{
+// 		Current->DisableTeleporter();
+// 		return;
+// 	}
+
+	IsTeleporting = true;
+
+	APlayerCameraManager *PlayerCamera = UGameplayStatics::GetPlayerCameraManager( GetWorld(), 0 );
+	PlayerCamera->StartCameraFade( 0, 1, kFadeOutDuration, kTeleportFadeColor, false, true );
+	
+	FTimerHandle TimerHandle;
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindUFunction( this, FName( TEXT( "FinishTeleport" ) ), Current );
+
+	GetWorldTimerManager().SetTimer( TimerHandle, TimerDelegate, kFadeOutDuration, false );
 }
 
 void AVRPawn::HandleStickInputStyleTeleportActivation( FVector2D AxisInput, AVRHand *Current, AVRHand *Other )
@@ -74,7 +114,7 @@ void AVRPawn::HandleStickInputStyleTeleportActivation( FVector2D AxisInput, AVRH
 	else 
 	{
 		if ( Current && Current->IsTeleporterActive )		
-			ExecuteTeleport();
+			ExecuteTeleport( Current );
 	}
 }
 

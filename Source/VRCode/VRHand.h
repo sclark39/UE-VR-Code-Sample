@@ -59,6 +59,7 @@ public:
 
 	FRotator TeleportRotator;
 	bool LastIsValidTeleportDestination;
+	bool HasValidTeleportLocation;
 
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
 	EGripState Grip;

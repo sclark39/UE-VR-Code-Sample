@@ -31,6 +31,8 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Default" )
 	uint8 DeviceType;
 
+	bool IsTeleporting;
+
 	// Sets default values for this pawn's properties
 	AVRPawn();
 
@@ -50,9 +52,10 @@ public:
 	void GripRight();
 	void StopGripRight();
 
+	UFUNCTION()
+	void FinishTeleport( class AVRHand *Current );
 
-	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Default" )
-	void ExecuteTeleport();
+	void ExecuteTeleport( class AVRHand *Current );
 
 	
 };
