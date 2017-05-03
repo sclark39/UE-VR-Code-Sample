@@ -26,3 +26,4 @@ I want this to be a learning resource that anyone can use, so I am publishing it
 - RoomScaleMesh not implememented
 - Rumble not implemented
 
+See Issues tab for info on the progress of these missing features.
