@@ -1,4 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/*
+* Author: Skyler Clark (@sclark39)
+* Website: http://skylerclark.com
+* License: MIT License
+*/
 
 #include "VRCode.h"
 #include "IPickupable.h"

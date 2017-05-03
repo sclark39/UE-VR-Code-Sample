@@ -1,4 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/*
+ * Copyright (c) 2017 Skyler Clark. All rights reserved.
+ *
+ * Licensed under the MIT License. See License.md file in the
+ * project root for full license information.
+ *
+ * Author: Skyler Clark (@sclark39)
+ * Website: http://skylerclark.com
+*
+* Github: https://github.com/sclark39/UE-VR-Code-Sample/
+ */
 
 #include "VRCode.h"
 #include "VRHand.h"
