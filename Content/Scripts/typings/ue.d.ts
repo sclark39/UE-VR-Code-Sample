@@ -6680,6 +6680,24 @@ declare class UdpMessagingSettings extends UObject {
 	static C(Other: UObject): UdpMessagingSettings;
 }
 
+declare class GamepadVRPawn extends Pawn { 
+	Scene: SceneComponent;
+	VROrigin: SceneComponent;
+	Camera: CameraComponent;
+	TraceDirection: ArrowComponent;
+	TeleportPin: StaticMeshComponent;
+	TeleportRing: StaticMeshComponent;
+	TeleportArrow: StaticMeshComponent;
+	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
+	static StaticClass: any;
+	static GetClassObject(): Class;
+	static GetDefaultObject(): GamepadVRPawn;
+	static GetDefaultSubobjectByName(Name: string): UObject;
+	static SetDefaultSubobjectClass(Name: string): void;
+	static CreateDefaultSubobject(Name: string, Transient?: boolean, Required?: boolean, Abstract?: boolean): GamepadVRPawn;
+	static C(Other: UObject): GamepadVRPawn;
+}
+
 declare class Pickupable extends Interface { 
 	constructor();
 	constructor(Outer: UObject);
