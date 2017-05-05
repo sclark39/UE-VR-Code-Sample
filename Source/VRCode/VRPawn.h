@@ -10,6 +10,15 @@
 
 #include "VRPawn.generated.h"
 
+UENUM( BlueprintType )
+enum class ETeleportControlScheme : uint8
+{
+	Auto,				// Select By Device
+	ButtonAndStick,		// Press a button
+	StickOnly,			// Robo Rally Style
+	ControllerRoll		// For PSVR
+};
+
 UCLASS()
 class VRCODE_API AVRPawn : public APawn
 {
@@ -44,6 +53,12 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
 	float ThumbDeadzone = 0.7;
 
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
+	float DefaultPlayerHeight = 180;
+
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
+	ETeleportControlScheme ControlScheme = ETeleportControlScheme::Auto;
+
 	uint8 DeviceType;
 	bool IsTeleporting;
 
@@ -59,17 +74,19 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent( class UInputComponent* InputComponent ) override;
 	
-	void UpdateGrip( UChildActorComponent *hand, bool pressed );
+	UFUNCTION()
+	void HandleButtonStyleTeleportActivation( class UChildActorComponent *Hand, EInputEvent KeyEvent );
 
-	void GripLeft();
-	void StopGripLeft();
-	void GripRight();
-	void StopGripRight();
+	UFUNCTION()
+	void HandleGrip( class UChildActorComponent *Hand, EInputEvent KeyEvent );
+
+	void BindInputActionUFunction( class UInputComponent* PlayerInputComponent, FName ActionName, EInputEvent KeyEvent, FName FuncName, class UChildActorComponent *Hand );
 
 	UFUNCTION()
 	void FinishTeleport( class AVRHand *Current, const FVector &TeleportPosition, const FRotator &TeleportRotator );
 
 	void ExecuteTeleport( class AVRHand *Current );
 
+	
 	
 };

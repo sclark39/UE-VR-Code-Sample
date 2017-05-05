@@ -41,6 +41,13 @@ void AVRPawn::BeginPlay()
 	{
 		DeviceType = hmd->GetHMDDeviceType();
 
+		// Set up Teleport Style
+		if ( ControlScheme == ETeleportControlScheme::Auto )
+			ControlScheme =
+				( DeviceType == EHMDDeviceType::DT_OculusRift	? ETeleportControlScheme::StickOnly :
+				( DeviceType == EHMDDeviceType::DT_Morpheus		? ETeleportControlScheme::ControllerRoll
+																: ETeleportControlScheme::ButtonAndStick ) );
+
 		if ( DeviceType == EHMDDeviceType::DT_SteamVR || DeviceType == EHMDDeviceType::DT_OculusRift )
 		{
 			hmd->SetTrackingOrigin(EHMDTrackingOrigin::Floor);
@@ -50,9 +57,8 @@ void AVRPawn::BeginPlay()
 			// PSVR
 			hmd->SetTrackingOrigin(EHMDTrackingOrigin::Eye);
 
-			// Set Height Offset for Tracking
-			FVector defaultHeightOffset(0, 0, 180);
-			VROrigin->AddLocalOffset(defaultHeightOffset);
+			// Set Height Offset for Tracking			
+			VROrigin->AddLocalOffset( FVector( 0, 0, DefaultPlayerHeight ) );
 		}
 	}
 
@@ -103,8 +109,34 @@ void AVRPawn::ExecuteTeleport( AVRHand *Current )
 	GetWorldTimerManager().SetTimer( TimerHandle, TimerDelegate, FadeOutDuration, false );
 }
 
+
+void AVRPawn::HandleButtonStyleTeleportActivation( UChildActorComponent *Hand, EInputEvent KeyEvent )
+{
+	if ( ControlScheme == ETeleportControlScheme::StickOnly )
+		return;
+
+	AVRHand *Current = Cast<AVRHand>( Hand->GetChildActor() );
+	AVRHand *Other = Cast<AVRHand>( ( Hand == LeftHand ? RightHand : LeftHand )->GetChildActor() );
+
+	if ( KeyEvent == IE_Pressed )
+	{
+		if ( Current )
+			Current->ActivateTeleporter();
+		if ( Other )
+			Other->DisableTeleporter();
+	}
+	else
+	{
+		if ( Current && Current->IsTeleporterActive )
+			ExecuteTeleport( Current );
+	}
+}
+
 void AVRPawn::HandleStickInputStyleTeleportActivation( FVector2D AxisInput, AVRHand *Current, AVRHand *Other )
 {
+	if ( ControlScheme != ETeleportControlScheme::StickOnly )
+		return;
+
 	const float ThumbDeadzoneSq = ThumbDeadzone * ThumbDeadzone;
 	if ( AxisInput.SizeSquared() > ThumbDeadzoneSq )
 	{
@@ -161,43 +193,83 @@ void AVRPawn::Tick( float DeltaTime )
 		);
 
 		// Robo Rally style Teleport Activation
-		if ( DeviceType == EHMDDeviceType::DT_OculusRift )
-		{			
-			HandleStickInputStyleTeleportActivation( ThumbLeft, Left, Right );
-			HandleStickInputStyleTeleportActivation( ThumbRight, Right, Left );
-		}
+		HandleStickInputStyleTeleportActivation( ThumbLeft, Left, Right );
+		HandleStickInputStyleTeleportActivation( ThumbRight, Right, Left );
 
-		// Teleport Rotation
-		FRotator OrientRotator;
+		// Get Teleport Target Rotation
 
-		if ( Left->IsTeleporterActive )
+		if ( ControlScheme != ETeleportControlScheme::ControllerRoll )
 		{
-			// Robo Rally style, don't change teleport rotator when releasing the stick
-			if ( GetRotationFromInput( ThumbLeft, OrientRotator ) )
-				Left->TeleportRotator = OrientRotator; 
-		}
+			// Get Teleport Rotation from Stick Direction or Actor
 
-		if ( Right->IsTeleporterActive )
+			if ( Left->IsTeleporterActive )
+			{
+				// If there is no Rotational Input, only use Actor rotation if not using Robo Rally style teleport
+				FRotator OrientRotator;
+				if ( GetRotationFromInput( ThumbLeft, OrientRotator ) || ControlScheme != ETeleportControlScheme::StickOnly )
+					Left->TeleportRotator = OrientRotator;
+			}
+
+			if ( Right->IsTeleporterActive )
+			{
+				// If there is no Rotational Input, only use Actor rotation if not using Robo Rally style teleport
+				FRotator OrientRotator;
+				if ( GetRotationFromInput( ThumbRight, OrientRotator ) || ControlScheme != ETeleportControlScheme::StickOnly )
+					Right->TeleportRotator = OrientRotator;
+			}
+		}
+		else
 		{
-			// Robo Rally style, don't change teleport rotator when releasing the stick
-			if ( GetRotationFromInput( ThumbRight, OrientRotator ) )
-				Right->TeleportRotator = OrientRotator;
+			// Get Teleport Rotation from Controller Roll
+
 		}
 
 	}
 
 }
 
+void AVRPawn::HandleGrip( UChildActorComponent *Hand, EInputEvent KeyEvent )
+{
+	AVRHand *Current = Cast<AVRHand>( Hand->GetChildActor() );
+	if ( Current )
+	{
+		if ( KeyEvent == IE_Pressed )
+			Current->GrabActor();
+		else // released
+			Current->ReleaseActor();
+	}
+}
+
+void AVRPawn::BindInputActionUFunction( class UInputComponent* PlayerInputComponent, FName ActionName, EInputEvent KeyEvent, FName FuncName, UChildActorComponent *Hand )
+{
+	FInputActionBinding InputActionBinding( ActionName, KeyEvent );
+
+	FInputActionHandlerSignature InputActionHandler;
+	InputActionHandler.BindUFunction( this, FuncName, Hand, KeyEvent );
+
+	InputActionBinding.ActionDelegate = InputActionHandler;
+	PlayerInputComponent->AddActionBinding( InputActionBinding );
+}
+
 // Called to bind functionality to input
 void AVRPawn::SetupPlayerInputComponent( class UInputComponent* PlayerInputComponent )
 {
 	Super::SetupPlayerInputComponent( PlayerInputComponent );
-	
-	PlayerInputComponent->BindAction( "GripLeft", IE_Pressed, this, &AVRPawn::GripLeft );
-	PlayerInputComponent->BindAction( "GripLeft", IE_Released, this, &AVRPawn::StopGripLeft );
 
-	PlayerInputComponent->BindAction( "GripRight", IE_Pressed, this, &AVRPawn::GripRight );
-	PlayerInputComponent->BindAction( "GripRight", IE_Released, this, &AVRPawn::StopGripRight );
+	BindInputActionUFunction( PlayerInputComponent, TEXT( "TeleportLeft" ), IE_Pressed, TEXT( "HandleButtonStyleTeleportActivation" ), LeftHand );
+	BindInputActionUFunction( PlayerInputComponent, TEXT( "TeleportLeft" ), IE_Released, TEXT( "HandleButtonStyleTeleportActivation" ), LeftHand );
+	BindInputActionUFunction( PlayerInputComponent, TEXT( "TeleportRight" ), IE_Pressed, TEXT( "HandleButtonStyleTeleportActivation" ), RightHand );
+	BindInputActionUFunction( PlayerInputComponent, TEXT( "TeleportRight" ), IE_Released, TEXT( "HandleButtonStyleTeleportActivation" ), RightHand );
+
+	BindInputActionUFunction( PlayerInputComponent, TEXT( "GripLeft" ), IE_Pressed, TEXT( "HandleGrip" ), LeftHand );
+	BindInputActionUFunction( PlayerInputComponent, TEXT( "GripLeft" ), IE_Released, TEXT( "HandleGrip" ), LeftHand );
+	BindInputActionUFunction( PlayerInputComponent, TEXT( "GrabLeft" ), IE_Pressed, TEXT( "HandleGrip" ), LeftHand );
+	BindInputActionUFunction( PlayerInputComponent, TEXT( "GrabLeft" ), IE_Released, TEXT( "HandleGrip" ), LeftHand );
+
+	BindInputActionUFunction( PlayerInputComponent, TEXT( "GripRight" ), IE_Pressed, TEXT( "HandleGrip" ), RightHand );
+	BindInputActionUFunction( PlayerInputComponent, TEXT( "GripRight" ), IE_Released, TEXT( "HandleGrip" ), RightHand );
+	BindInputActionUFunction( PlayerInputComponent, TEXT( "GrabRight" ), IE_Pressed, TEXT( "HandleGrip" ), RightHand );
+	BindInputActionUFunction( PlayerInputComponent, TEXT( "GrabRight" ), IE_Released, TEXT( "HandleGrip" ), RightHand );
 
 	PlayerInputComponent->BindAxis( TEXT( "ThumbLeft_Fwd" ) );
 	PlayerInputComponent->BindAxis( TEXT( "ThumbRight_Fwd" ) );
@@ -205,19 +277,3 @@ void AVRPawn::SetupPlayerInputComponent( class UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis( TEXT( "ThumbLeft_Side" ) );
 	PlayerInputComponent->BindAxis( TEXT( "ThumbRight_Side" ) );
 }
-
-void AVRPawn::UpdateGrip( UChildActorComponent *hand, bool pressed )
-{
-	AVRHand *vrHand = Cast<AVRHand>( hand->GetChildActor() );
-	if ( vrHand )
-	{
-		if ( pressed )
-			vrHand->GrabActor();
-		else // released
-			vrHand->ReleaseActor();
-	}
-}
-void AVRPawn::GripLeft()		{ UpdateGrip( LeftHand, true ); }
-void AVRPawn::StopGripLeft()	{ UpdateGrip( LeftHand, false ); }
-void AVRPawn::GripRight()		{ UpdateGrip( RightHand, true ); }
-void AVRPawn::StopGripRight()	{ UpdateGrip( RightHand, false ); }
