@@ -37,7 +37,7 @@ class VRCODE_API AVRPawn : public APawn
 	class UChildActorComponent *RightHand;
 
 	void HandleStickInputStyleTeleportActivation( FVector2D AxisInput, class AVRHand *Current, class AVRHand *Other );
-	bool GetRotationFromInput( FVector2D AxisInput, FRotator &OrientRotator );
+	bool GetRotationFromInput( class AVRHand *Current, FVector2D AxisInput, FRotator &OrientRotator );
 
 public:
 

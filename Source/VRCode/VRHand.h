@@ -53,7 +53,7 @@ class VRCODE_API AVRHand : public AActor
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Code Components", meta = ( AllowPrivateAccess = "true" ) )
 	class UStaticMeshComponent *TeleportArrow;
 
-	
+	FRotator InitialControllerRotation;
 	TArray<class USplineMeshComponent*> SplineMeshes;
 public:	
 
@@ -120,5 +120,7 @@ public:
 
 	void GetTeleportDestination( FVector &OutPosition, FRotator &OutRotator );
 	bool TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &NavMeshLocation, FVector &TraceLocation );
+
+	FRotator GetControllerRelativeRotation();
 
 };

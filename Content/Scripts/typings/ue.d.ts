@@ -6755,6 +6755,8 @@ declare class VRHand extends Actor {
 	static C(Other: UObject): VRHand;
 }
 
+declare type ETeleportControlScheme = 'Auto' | 'ButtonAndStick' | 'StickOnly' | 'ControllerRoll';
+declare var ETeleportControlScheme : { Auto:'Auto',ButtonAndStick:'ButtonAndStick',StickOnly:'StickOnly',ControllerRoll:'ControllerRoll', };
 declare class VRPawn extends Pawn { 
 	VROrigin: SceneComponent;
 	Camera: CameraComponent;
@@ -6764,6 +6766,8 @@ declare class VRPawn extends Pawn {
 	FadeOutDuration: number;
 	TeleportFadeColor: LinearColor;
 	ThumbDeadzone: number;
+	DefaultPlayerHeight: number;
+	ControlScheme: ETeleportControlScheme;
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
 	static StaticClass: any;
 	static GetClassObject(): Class;
@@ -6771,6 +6775,8 @@ declare class VRPawn extends Pawn {
 	static GetDefaultSubobjectByName(Name: string): UObject;
 	static SetDefaultSubobjectClass(Name: string): void;
 	static CreateDefaultSubobject(Name: string, Transient?: boolean, Required?: boolean, Abstract?: boolean): VRPawn;
+	HandleGrip(Hand: ChildActorComponent,KeyEvent: EInputEvent): void;
+	HandleButtonStyleTeleportActivation(Hand: ChildActorComponent,KeyEvent: EInputEvent): void;
 	FinishTeleport(Current: VRHand,TeleportPosition: Vector,TeleportRotator: Rotator): void;
 	static C(Other: UObject): VRPawn;
 }

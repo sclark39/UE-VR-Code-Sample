@@ -152,21 +152,32 @@ void AVRPawn::HandleStickInputStyleTeleportActivation( FVector2D AxisInput, AVRH
 	}
 }
 
-bool AVRPawn::GetRotationFromInput( FVector2D AxisInput, FRotator &OrientRotator )
+bool AVRPawn::GetRotationFromInput( AVRHand *Current, FVector2D AxisInput, FRotator &OrientRotator )
 {
 	FRotator ActorRotator = GetActorRotation();
 	ActorRotator.Roll = 0;
 	ActorRotator.Pitch = 0;
 
-	const float ThumbDeadzoneSq = ThumbDeadzone * ThumbDeadzone;
-	if ( AxisInput.SizeSquared() > ThumbDeadzoneSq )
+	if ( ControlScheme == ETeleportControlScheme::ControllerRoll )
 	{
-		FVector InputVector( AxisInput, 0 ); 
-		InputVector.Normalize();
-		InputVector = ActorRotator.RotateVector( InputVector );
+		const FRotator RelativeRotation = Current->GetControllerRelativeRotation();
+		float FinalYaw = RelativeRotation.Roll * 3 + ActorRotator.Yaw;
 
-		OrientRotator = InputVector.ToOrientationRotator();
+		OrientRotator = FRotator( 0, FinalYaw, 0 );
 		return true;
+	}
+	else
+	{
+		const float ThumbDeadzoneSq = ThumbDeadzone * ThumbDeadzone;
+		if ( AxisInput.SizeSquared() > ThumbDeadzoneSq )
+		{
+			FVector InputVector( AxisInput, 0 );
+			InputVector.Normalize();
+			InputVector = ActorRotator.RotateVector( InputVector );
+
+			OrientRotator = InputVector.ToOrientationRotator();
+			return true;
+		}
 	}
 
 	OrientRotator = ActorRotator;
@@ -197,32 +208,22 @@ void AVRPawn::Tick( float DeltaTime )
 		HandleStickInputStyleTeleportActivation( ThumbRight, Right, Left );
 
 		// Get Teleport Target Rotation
-
-		if ( ControlScheme != ETeleportControlScheme::ControllerRoll )
+		if ( Left->IsTeleporterActive )
 		{
-			// Get Teleport Rotation from Stick Direction or Actor
-
-			if ( Left->IsTeleporterActive )
-			{
-				// If there is no Rotational Input, only use Actor rotation if not using Robo Rally style teleport
-				FRotator OrientRotator;
-				if ( GetRotationFromInput( ThumbLeft, OrientRotator ) || ControlScheme != ETeleportControlScheme::StickOnly )
-					Left->TeleportRotator = OrientRotator;
-			}
-
-			if ( Right->IsTeleporterActive )
-			{
-				// If there is no Rotational Input, only use Actor rotation if not using Robo Rally style teleport
-				FRotator OrientRotator;
-				if ( GetRotationFromInput( ThumbRight, OrientRotator ) || ControlScheme != ETeleportControlScheme::StickOnly )
-					Right->TeleportRotator = OrientRotator;
-			}
+			// If there is no Rotational Input, only use Actor rotation if not using Robo Rally style teleport
+			FRotator OrientRotator;
+			if ( GetRotationFromInput( Left, ThumbLeft, OrientRotator ) || ControlScheme != ETeleportControlScheme::StickOnly )
+				Left->TeleportRotator = OrientRotator;
 		}
-		else
+
+		if ( Right->IsTeleporterActive )
 		{
-			// Get Teleport Rotation from Controller Roll
-
+			// If there is no Rotational Input, only use Actor rotation if not using Robo Rally style teleport
+			FRotator OrientRotator;
+			if ( GetRotationFromInput( Right, ThumbRight, OrientRotator ) || ControlScheme != ETeleportControlScheme::StickOnly )
+				Right->TeleportRotator = OrientRotator;
 		}
+		
 
 	}
 

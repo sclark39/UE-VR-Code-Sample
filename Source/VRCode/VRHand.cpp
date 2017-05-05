@@ -335,7 +335,11 @@ void AVRHand::Tick( float DeltaTime )
 
 void AVRHand::ActivateTeleporter()
 {
+//	if ( GEngine ) GEngine->AddOnScreenDebugMessage( -1, 0.16f, FColor::White, FString::Printf( TEXT( "Activating Teleporter " ) ) );
 	IsTeleporterActive = true;
+
+	if ( MotionController )
+		InitialControllerRotation = MotionController->GetComponentRotation();
 }
 
 
@@ -410,4 +414,13 @@ void AVRHand::GetTeleportDestination( FVector &OutPosition, FRotator &OutRotator
 	// Substract HMD origin (Camera) to get correct Pawn destination for teleportation.
 	OutPosition = TeleportCylinder->GetComponentLocation() - DevicePosition;
 	OutRotator = TeleportRotator;
+}
+
+FRotator AVRHand::GetControllerRelativeRotation()
+{
+	const FTransform InitialTransform( InitialControllerRotation );
+	const FTransform CurrentTransform = MotionController->GetComponentTransform();
+	const FTransform RelativeTransform = CurrentTransform.GetRelativeTransform( InitialTransform );
+
+	return RelativeTransform.GetRotation().Rotator();
 }
