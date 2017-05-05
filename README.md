@@ -10,20 +10,20 @@ I want this to be a learning resource that anyone can use, so I am publishing it
 
 ## Implemented
 - Teleport with Stick Input
+- PSVR Controller Roll to Teleport
 - Pickup and throw physics based objects
 - Create Teleport splines and do traces in C++
 - Create default implementations of all components in C++, to be filled in from Editor
   - Added a workaround for issue UE-41708 in the Blueprint for VRPawn_BP; setting the ChildActorComponent to another code blueprint causes issues in UE4.14 and UE4.15
 
 ## Changed
-- Teleport changed to be activated/deactivated by stick input like Robo Rally, rather than a seperate button
+- Teleport changed to be activated/deactivated by stick input like Robo Rally, rather than a seperate button for Rift (optional)
 - Added a workaround (via a blueprint) to trigger haptic feedback when the rumble event occurs since Touch has no rumble capability
 
 ## Missing
-- PSVR Controller Roll to Teleport
 - HMD Locomotion Pawn
+- Rumble not implemented
 - SteamVRChaperone not implemented
 - RoomScaleMesh not implememented
-- Rumble not implemented
 
 See Issues tab for info on the progress of these missing features.
