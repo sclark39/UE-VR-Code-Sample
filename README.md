@@ -9,6 +9,7 @@ If you see things that are not to Unreal Engine's coding standard, or know an ea
 I want this to be a learning resource that anyone can use, so I am publishing it under the MIT License but if this license causes an issue for you please let me know!
 
 ## Implemented
+- HMD Locomotion Pawn
 - Teleport with Stick Input
 - PSVR Controller Roll to Teleport
 - Pickup and throw physics based objects
@@ -21,9 +22,7 @@ I want this to be a learning resource that anyone can use, so I am publishing it
 - Added a workaround (via a blueprint) to trigger haptic feedback when the rumble event occurs since Touch has no rumble capability
 
 ## Missing
-- HMD Locomotion Pawn
 - Rumble not implemented
-- SteamVRChaperone not implemented
-- RoomScaleMesh not implememented
+- SteamVRChaperone / RoomScaleMesh not implemented
 
 See Issues tab for info on the progress of these missing features.
