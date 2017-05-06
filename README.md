@@ -2,7 +2,7 @@
 
 I was disappointed that there was no C++ version of Unreal 4.14's VR template, so I decided to make one.
 
-I have an Oculus Rift, so I made the teleport work more like Robo Rally. There are a bunch of Steam VR things that I did not implement because I do not have a Vive. I'd be happy to accept pull requests.
+I have an Oculus Rift, so for the Rift I made the teleport work more like Robo Rally since the original control scheme was pretty awkward. This can be changed in the Pawn's settings.
 
 If you see things that are not to Unreal Engine's coding standard, or know an easier way to accomplish anything please let me know or do a pull request!
 
@@ -25,4 +25,4 @@ I want this to be a learning resource that anyone can use, so I am publishing it
 - Rumble not implemented
 - SteamVRChaperone / RoomScaleMesh not implemented
 
-See Issues tab for info on the progress of these missing features.
+See Issues tab for info on the progress of these missing features. I do not have a Vive or PSVR, so they are untested. I am happy to accept pull requests for any issues found.
