@@ -6688,6 +6688,13 @@ declare class GamepadVRPawn extends Pawn {
 	TeleportPin: StaticMeshComponent;
 	TeleportRing: StaticMeshComponent;
 	TeleportArrow: StaticMeshComponent;
+	bUseGamepad: boolean;
+	FadeInDuration: number;
+	FadeOutDuration: number;
+	TeleportFadeColor: LinearColor;
+	DefaultPlayerHeight: number;
+	ThumbDeadzone: number;
+	RotationLengthThreshold: number;
 	constructor(InWorld: World, Location?: Vector, Rotation?: Rotator);
 	static StaticClass: any;
 	static GetClassObject(): Class;
@@ -6695,6 +6702,7 @@ declare class GamepadVRPawn extends Pawn {
 	static GetDefaultSubobjectByName(Name: string): UObject;
 	static SetDefaultSubobjectClass(Name: string): void;
 	static CreateDefaultSubobject(Name: string, Transient?: boolean, Required?: boolean, Abstract?: boolean): GamepadVRPawn;
+	FinishTeleport(): void;
 	static C(Other: UObject): GamepadVRPawn;
 }
 

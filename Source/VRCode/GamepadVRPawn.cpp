@@ -133,7 +133,7 @@ void AGamepadVRPawn::UpdateTeleportDirection( const FVector2D &StickInput )
 
 		FVector StickDirection( StickInput, 0 );
 		StickDirection.Normalize();
-		StickDirection *= 400;
+		StickDirection *= 400.0;
 
 		const FVector TeleportDirection = ActorRotator.RotateVector( StickDirection );
 
@@ -159,8 +159,8 @@ void AGamepadVRPawn::Tick( float DeltaTime )
 	CurrentLocationValid = GetTeleportDirection( CurrentLookAtLocation );
 
 	const FVector2D StickInput(
-		InputComponent->GetAxisValue( TEXT( "TeleportDirectionUp" ) ),
-		InputComponent->GetAxisValue( TEXT( "TeleportDirectionRight" ) )
+		InputComponent ? InputComponent->GetAxisValue( TEXT( "TeleportDirectionUp" ) ) : 0,
+		InputComponent ? InputComponent->GetAxisValue( TEXT( "TeleportDirectionRight" ) ) : 0
 	);
 
 	if ( LocationPinned )
@@ -235,17 +235,19 @@ void AGamepadVRPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 bool AGamepadVRPawn::GetTeleportDirection( FVector &OutLocation )
 {
 	FVector StartPos = TraceDirection->GetComponentLocation();
-	FVector EndPos = StartPos + TraceDirection->GetForwardVector() * 10000;
+	FVector EndPos = StartPos + TraceDirection->GetForwardVector() * 10000.0;
 
 	FHitResult OutHit;
 
 	TArray<AActor *> ActorsToIgnore;
-	UKismetSystemLibrary::SphereTraceSingle_NEW( GetWorld(), StartPos, EndPos, 60, UEngineTypes::ConvertToTraceType( ECollisionChannel::ECC_Visibility ), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true );
+	ActorsToIgnore.Push( this );
+
+	UKismetSystemLibrary::SphereTraceSingle_NEW( GetWorld(), StartPos, EndPos, 60, UEngineTypes::ConvertToTraceType( ECollisionChannel::ECC_Visibility ), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, false );
 
 	const bool bSurfaceIsHorizontal = ( FVector::DotProduct( FVector::UpVector, OutHit.ImpactNormal ) >= 0.6 );
 	if ( OutHit.bBlockingHit && bSurfaceIsHorizontal )
 	{
-		OutLocation = OutHit.Location;
+		OutLocation = OutHit.ImpactPoint;
 		return true;
 	}
 
