@@ -111,18 +111,15 @@ void AVRHand::OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComp, AAct
 // Called when the game starts or when spawned
 void AVRHand::BeginPlay()
 {
-	MotionController->Hand = Hand;
-
 	Super::BeginPlay();
 
-	// HACK FIX: ISSUE UE-41708
-	//   We need to wait until play begins to set the blueprint for the child actor so we 
-	//   also need to do the flip transform in BeginPlay, since OnConstruction is too early.
+	MotionController->Hand = Hand;
 	if ( Hand == EControllerHand::Left )
 	{
 		// Reflect hand mesh
+		MotionController->Hand = Hand;
 		HandMesh->SetWorldScale3D( FVector( 1, 1, -1 ) );
-	}	
+	}
 
 	// Hide until activation (but wait for BeginPlay so it is shown in editor)
 	TeleportCylinder->SetVisibility( false, true );
@@ -230,6 +227,21 @@ void AVRHand::ReleaseActor_Implementation()
 void AVRHand::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+
+	// HACK FIX: ISSUE UE-41708
+	//   We need to wait until play begins to set the blueprint for the child actor so we 
+	//   also need to do the flip transform in BeginPlay, since OnConstruction is too early.
+	if ( MotionController->Hand != Hand )
+	{
+		if ( Hand == EControllerHand::Left )
+		{
+			// Reflect hand mesh
+			MotionController->Hand = Hand;
+			HandMesh->SetWorldScale3D( FVector( 1, 1, -1 ) );
+		}
+	}
+
 
 	UpdateAnimationGripState();
 

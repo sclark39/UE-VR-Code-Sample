@@ -242,7 +242,7 @@ bool AGamepadVRPawn::GetTeleportDirection( FVector &OutLocation )
 	TArray<AActor *> ActorsToIgnore;
 	ActorsToIgnore.Push( this );
 
-	UKismetSystemLibrary::SphereTraceSingle_NEW( GetWorld(), StartPos, EndPos, 60, UEngineTypes::ConvertToTraceType( ECollisionChannel::ECC_Visibility ), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, false );
+	UKismetSystemLibrary::SphereTraceSingle( GetWorld(), StartPos, EndPos, 60, UEngineTypes::ConvertToTraceType( ECollisionChannel::ECC_Visibility ), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, false );
 
 	const bool bSurfaceIsHorizontal = ( FVector::DotProduct( FVector::UpVector, OutHit.ImpactNormal ) >= 0.6 );
 	if ( OutHit.bBlockingHit && bSurfaceIsHorizontal )
