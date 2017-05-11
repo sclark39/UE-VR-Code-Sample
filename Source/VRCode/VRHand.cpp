@@ -20,6 +20,8 @@
 #include "Runtime/Engine/Classes/Kismet/HeadMountedDisplayFunctionLibrary.h"
 #include "Runtime/Engine/Classes/Components/SplineMeshComponent.h"
 
+DECLARE_CYCLE_STAT( TEXT( "VRHand ~ CreateSpline" ), STAT_CreateSpline, STATGROUP_VRHand );
+
 // Sets default values
 AVRHand::AVRHand() :
 	Extents( 500, 500, 500 )
@@ -280,46 +282,54 @@ void AVRHand::Tick( float DeltaTime )
 			}
 
 			TeleportArrow->SetWorldRotation( ArrowRotator );
-
 			
-			// Destroy old Spline
-			for ( USplineMeshComponent *SplineMesh : SplineMeshes )
-				SplineMesh->DestroyComponent();
-			SplineMeshes.Reset();
-			ArcSpline->ClearSplinePoints();
-
-			// Make Spline....
-			if ( TracePoints.Num() > 0 )
 			{
-				for ( FVector TracePoint : TracePoints )
+				SCOPE_CYCLE_COUNTER( STAT_CreateSpline );
+
+				// Make Spline....
+				if ( TracePoints.Num() > 0 )
 				{
-					ArcSpline->AddSplinePoint( TracePoint, ESplineCoordinateSpace::Local, true );
+					ArcSpline->ClearSplinePoints();
+					for ( FVector TracePoint : TracePoints )
+					{
+						ArcSpline->AddSplinePoint( TracePoint, ESplineCoordinateSpace::Local, true );
+					}
+					ArcSpline->SetSplinePointType( TracePoints.Num() - 1, ESplinePointType::CurveClamped, true );
+
+					for ( int i = 0; i < TracePoints.Num() - 2; i++ )
+					{
+						FVector StartPos = TracePoints[i];
+						FVector StartTangent = ArcSpline->GetTangentAtSplinePoint( i, ESplineCoordinateSpace::Local );
+
+						FVector EndPos = TracePoints[i + 1];
+						FVector EndTangent = ArcSpline->GetTangentAtSplinePoint( i + 1, ESplineCoordinateSpace::Local );
+
+						USplineMeshComponent *SplineMeshComponent;
+						
+						if ( i >= SplineMeshes.Num() )
+						{
+							SplineMeshComponent = NewObject<USplineMeshComponent>( this, USplineMeshComponent::StaticClass() );
+							SplineMeshComponent->SetStaticMesh( BeamMesh );
+							SplineMeshComponent->SetMaterial( 0, BeamMaterial );
+							SplineMeshComponent->SetStartScale( FVector2D( 4, 4 ) );
+							SplineMeshComponent->SetEndScale( FVector2D( 4, 4 ) );
+							SplineMeshComponent->SetBoundaryMax( 1 );
+							SplineMeshes.Push( SplineMeshComponent );
+						}
+						SplineMeshComponent = SplineMeshes[i];
+
+						SplineMeshComponent->SetVisibility( true );
+						SplineMeshComponent->SetStartAndEnd( StartPos, StartTangent, EndPos, EndTangent );
+
+
+					}
+
+					// Hide any extra
+					for ( int i = TracePoints.Num() - 2; i < SplineMeshes.Num(); i++ )
+						SplineMeshes[i]->SetVisibility( false );
+
+					RegisterAllComponents();
 				}
-				ArcSpline->SetSplinePointType( TracePoints.Num() - 1, ESplinePointType::CurveClamped, true );
-
-				for ( int i = 0; i < TracePoints.Num() - 2; i++ )
-				{
-					FVector StartPos = TracePoints[i];
-					FVector StartTangent = ArcSpline->GetTangentAtSplinePoint( i, ESplineCoordinateSpace::Local );
-
-					FVector EndPos = TracePoints[i + 1];
-					FVector EndTangent = ArcSpline->GetTangentAtSplinePoint( i + 1, ESplineCoordinateSpace::Local );
-
-					USplineMeshComponent *SplineMeshComponent = NewObject<USplineMeshComponent>( this, USplineMeshComponent::StaticClass() );
-					SplineMeshComponent->SetStaticMesh( BeamMesh );
-					SplineMeshComponent->SetMaterial( 0, BeamMaterial );
-					SplineMeshComponent->SetStartScale( FVector2D( 4, 4 ) );
-					SplineMeshComponent->SetEndScale( FVector2D( 4, 4 ) );
-					SplineMeshComponent->SetBoundaryMax( 1 );
-
-					SplineMeshComponent->SetStartAndEnd( StartPos, StartTangent, EndPos, EndTangent );
-
-
-					SplineMeshes.Push( SplineMeshComponent );
-				}
-				RegisterAllComponents();
-
-
 			}
 
 			
@@ -350,11 +360,9 @@ void AVRHand::DisableTeleporter()
 	TeleportCylinder->SetVisibility( false, true );
 	ArcEndPoint->SetVisibility( false );
 
-	// Destroy old Spline
+	// Hide old Spline
 	for ( USplineMeshComponent *SplineMesh : SplineMeshes )
-		SplineMesh->DestroyComponent();
-	SplineMeshes.Reset();
-	ArcSpline->ClearSplinePoints();
+		SplineMesh->SetVisibility( false );
 
 	// TODO: Roomscale Mesh
 }

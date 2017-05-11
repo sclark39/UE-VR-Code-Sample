@@ -18,6 +18,9 @@ enum class EGripState : uint8
 	Grab
 };
 
+//For UE4 Profiler ~ Stat Group
+DECLARE_STATS_GROUP( TEXT( "VRHand" ), STATGROUP_VRHand, STATCAT_Advanced );
+
 UCLASS()
 class VRCODE_API AVRHand : public AActor
 {
