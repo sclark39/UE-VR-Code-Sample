@@ -367,22 +367,16 @@ bool AVRHand::TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &N
 	LaunchVelocity *= TeleportLaunchVelocity;
 
 	// Predict Projectile Path
-	FHitResult OutHit;
-	TArray<FVector> OutPathPositions;
-	FVector OutLastTraceDestination;
-	TArray<AActor*> ActorsToIgnore;
-	TArray<TEnumAsByte<EObjectTypeQuery> > ObjectTypes;
-	ObjectTypes.Push( 
-		UEngineTypes::ConvertToObjectType( ECC_WorldStatic )
-	);
-	const bool DidPredictPath = UGameplayStatics::PredictProjectilePath( GetWorld(), OutHit, OutPathPositions, OutLastTraceDestination,
-		StartPos, LaunchVelocity, true, 0, ObjectTypes, false, ActorsToIgnore,
-		EDrawDebugTrace::Type::None, 0 );
+	
+	FPredictProjectilePathParams PredictParams( 0.0f, StartPos, LaunchVelocity, 4.0f, UEngineTypes::ConvertToObjectType( ECC_WorldStatic ) );
+	FPredictProjectilePathResult PredictResult;
+	const bool DidPredictPath = UGameplayStatics::PredictProjectilePath( GetWorld(), PredictParams, PredictResult );
 	if ( !DidPredictPath )
 		return false;
 
 	// Getting Projected Endpoint
-	FVector PointToProject = OutHit.Location;
+	
+	FVector PointToProject = PredictResult.HitResult.Location;
 	FNavLocation ProjectedHitLocation; 
 	UNavigationSystem *NavSystem = GetWorld()->GetNavigationSystem();
 	const bool DidProjectToNav = NavSystem->ProjectPointToNavigation( PointToProject, ProjectedHitLocation, Extents );
@@ -390,9 +384,14 @@ bool AVRHand::TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &N
 		return false;
 
 	// Outputs...
-	TracePoints = OutPathPositions;
-	TraceLocation = OutHit.Location;
+
+	TracePoints.Empty();
+	for ( FPredictProjectilePathPointData Point : PredictResult.PathData )
+		TracePoints.Push( Point.Location );
+
+	TraceLocation = PredictResult.HitResult.Location;
 	NavMeshLocation = ProjectedHitLocation.Location;	
+
 	return true;
 }
 
