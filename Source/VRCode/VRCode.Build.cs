@@ -8,7 +8,7 @@ using UnrealBuildTool;
 
 public class VRCode : ModuleRules
 {
-	public VRCode(TargetInfo Target)
+	public VRCode(ReadOnlyTargetRules ROTargetRules) : base(ROTargetRules)
 	{
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay" });
 

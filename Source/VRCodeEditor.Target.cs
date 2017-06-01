@@ -9,21 +9,10 @@ using System.Collections.Generic;
 
 public class VRCodeEditorTarget : TargetRules
 {
-	public VRCodeEditorTarget(TargetInfo Target)
-	{
-		Type = TargetType.Editor;
-	}
+    public VRCodeEditorTarget(TargetInfo Target) : base(Target)
+    {
+        Type = TargetType.Editor;
 
-	//
-	// TargetRules interface.
-	//
-
-	public override void SetupBinaries(
-		TargetInfo Target,
-		ref List<UEBuildBinaryConfiguration> OutBuildBinaryConfigurations,
-		ref List<string> OutExtraModuleNames
-		)
-	{
-		OutExtraModuleNames.AddRange( new string[] { "VRCode" } );
-	}
+        ExtraModuleNames.AddRange(new string[] { "VRCode" });
+    }
 }
