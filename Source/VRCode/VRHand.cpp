@@ -228,21 +228,6 @@ void AVRHand::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-
-	// HACK FIX: ISSUE UE-41708
-	//   We need to wait until play begins to set the blueprint for the child actor so we 
-	//   also need to do the flip transform in BeginPlay, since OnConstruction is too early.
-	if ( MotionController->Hand != Hand )
-	{
-		if ( Hand == EControllerHand::Left )
-		{
-			// Reflect hand mesh
-			MotionController->Hand = Hand;
-			HandMesh->SetWorldScale3D( FVector( 1, 1, -1 ) );
-		}
-	}
-
-
 	UpdateAnimationGripState();
 
 	if ( IsTeleporterActive )

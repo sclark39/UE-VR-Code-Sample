@@ -52,6 +52,7 @@ class VRCODE_API AVRHand : public AActor
 
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Code Components", meta = ( AllowPrivateAccess = "true" ) )
 	class UStaticMeshComponent *TeleportArrow;
+	
 
 	FRotator InitialControllerRotation;
 	TArray<class USplineMeshComponent*> SplineMeshes;
