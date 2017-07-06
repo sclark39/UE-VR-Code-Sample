@@ -69,6 +69,9 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
 	float RotationLengthThreshold = 100;
 
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
+	FVector Extents;
+
 	// Sets default values for this pawn's properties
 	AGamepadVRPawn();
 

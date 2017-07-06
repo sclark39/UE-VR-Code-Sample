@@ -81,18 +81,10 @@ void AVRHand::OnConstruction(const FTransform & Transform)
 
 void AVRHand::RumbleController_Implementation( float intensity )
 {
-	bool isLeft = Hand == EControllerHand::Left;
-
 	FLatentActionInfo actionInfo;
 	actionInfo.CallbackTarget = this;
 	APlayerController *playerController = GetWorld()->GetFirstPlayerController();
-
-	playerController->PlayDynamicForceFeedback( intensity, 
-												0.04f,
-												isLeft, isLeft,
-												!isLeft, !isLeft,
-												EDynamicForceFeedbackAction::Start,
-												actionInfo );
+	playerController->PlayHapticEffect( HapticEffect, Hand, intensity, false );
 }
 
 void AVRHand::OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult )

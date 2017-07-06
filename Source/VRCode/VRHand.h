@@ -64,6 +64,9 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
 	class UMaterial *BeamMaterial;
 
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
+	class UHapticFeedbackEffect_Base *HapticEffect;
+
 	/** Is this the left or right hand */
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
 	EControllerHand Hand;
