@@ -20,7 +20,7 @@ enum class ETeleportControlScheme : uint8
 };
 
 UCLASS()
-class VRCODE_API AVRPawn : public APawn
+class TP_VIRTUALREALITY_API AVRPawn : public APawn
 {
 	GENERATED_BODY()
 

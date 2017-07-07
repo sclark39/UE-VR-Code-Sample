@@ -10,7 +10,7 @@
 * Github: https://github.com/sclark39/UE-VR-Code-Sample/
  */
 
-#include "VRCode.h"
+#include "TP_VirtualReality.h"
 #include "VRHand.h"
 #include "IPickupable.h"
 #include "Runtime/HeadMountedDisplay/Public/MotionControllerComponent.h"

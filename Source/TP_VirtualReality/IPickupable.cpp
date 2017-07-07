@@ -4,7 +4,7 @@
 * License: MIT License
 */
 
-#include "VRCode.h"
+#include "TP_VirtualReality.h"
 #include "IPickupable.h"
 
 

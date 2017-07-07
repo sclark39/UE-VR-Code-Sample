@@ -11,7 +11,7 @@
 #include "GamepadVRPawn.generated.h"
 
 UCLASS()
-class VRCODE_API AGamepadVRPawn : public APawn
+class TP_VIRTUALREALITY_API AGamepadVRPawn : public APawn
 {
 	GENERATED_BODY()
 

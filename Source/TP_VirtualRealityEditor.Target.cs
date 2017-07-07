@@ -7,12 +7,12 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class VRCodeEditorTarget : TargetRules
+public class TP_VirtualRealityEditorTarget : TargetRules
 {
-    public VRCodeEditorTarget(TargetInfo Target) : base(Target)
+    public TP_VirtualRealityEditorTarget(TargetInfo Target) : base(Target)
     {
         Type = TargetType.Editor;
 
-        ExtraModuleNames.AddRange(new string[] { "VRCode" });
+        ExtraModuleNames.AddRange(new string[] { "TP_VirtualReality" });
     }
 }

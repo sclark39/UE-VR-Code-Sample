@@ -13,7 +13,7 @@
  * 
  */
 UCLASS()
-class VRCODE_API AVRCodeGameModeBase : public AGameModeBase
+class TP_VIRTUALREALITY_API AVRCodeGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	

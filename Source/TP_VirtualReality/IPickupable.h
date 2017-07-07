@@ -18,7 +18,7 @@ class UPickupable : public UInterface
 /**
  * 
  */
-class VRCODE_API IPickupable
+class TP_VIRTUALREALITY_API IPickupable
 {
 	GENERATED_IINTERFACE_BODY()
 

@@ -11,7 +11,7 @@
 #include "PickupCube.generated.h"
 
 UCLASS()
-class VRCODE_API APickupCube : public AActor, public IPickupable
+class TP_VIRTUALREALITY_API APickupCube : public AActor, public IPickupable
 {
 	GENERATED_BODY()
 

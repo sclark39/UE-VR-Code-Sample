@@ -7,11 +7,11 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class VRCodeTarget : TargetRules
+public class TP_VirtualRealityTarget : TargetRules
 {
-	public VRCodeTarget(TargetInfo Target) : base(Target)
+	public TP_VirtualRealityTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-        ExtraModuleNames.AddRange(new string[] { "VRCode" });
+        ExtraModuleNames.AddRange(new string[] { "TP_VirtualReality" });
     }
 }

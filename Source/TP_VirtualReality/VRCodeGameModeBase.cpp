@@ -4,6 +4,9 @@
 * License: MIT License
 */
 
-#include "VRCode.h"
+#include "TP_VirtualReality.h"
+#include "VRCodeGameModeBase.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, VRCode, "VRCode" );
+
+
+

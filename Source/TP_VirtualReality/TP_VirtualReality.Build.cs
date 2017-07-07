@@ -6,9 +6,9 @@
 
 using UnrealBuildTool;
 
-public class VRCode : ModuleRules
+public class TP_VirtualReality : ModuleRules
 {
-	public VRCode(ReadOnlyTargetRules ROTargetRules) : base(ROTargetRules)
+	public TP_VirtualReality(ReadOnlyTargetRules ROTargetRules) : base(ROTargetRules)
 	{
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay" });
 

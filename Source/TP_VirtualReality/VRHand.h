@@ -19,7 +19,7 @@ enum class EGripState : uint8
 };
 
 UCLASS()
-class VRCODE_API AVRHand : public AActor
+class TP_VIRTUALREALITY_API AVRHand : public AActor
 {
 	GENERATED_BODY()
 
