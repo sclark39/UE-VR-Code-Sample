@@ -11,8 +11,8 @@
  */
 
 #include "TP_VirtualReality.h"
-#include "VRHand.h"
-#include "IPickupable.h"
+#include "TP_VirtualRealityMotionController.h"
+#include "TP_VirtualRealityPickupable.h"
 #include "Runtime/HeadMountedDisplay/Public/MotionControllerComponent.h"
 #include "Runtime/Engine/Classes/Components/SplineComponent.h"
 #include "Runtime/HeadMountedDisplay/Public/IHeadMountedDisplay.h"
@@ -21,7 +21,7 @@
 #include "Runtime/Engine/Classes/Components/SplineMeshComponent.h"
 
 // Sets default values
-AVRHand::AVRHand() :
+ATP_VirtualRealityMotionController::ATP_VirtualRealityMotionController() :
 	Extents( 500, 500, 500 )
 {
 
@@ -44,7 +44,7 @@ AVRHand::AVRHand() :
 	GrabSphere = CreateDefaultSubobject<USphereComponent>( TEXT( "GrabSphere" ) );
 	GrabSphere->SetupAttachment( HandMesh ); 
 	GrabSphere->InitSphereRadius( 10.0f );
-	GrabSphere->OnComponentBeginOverlap.AddDynamic( this, &AVRHand::OnComponentBeginOverlap );
+	GrabSphere->OnComponentBeginOverlap.AddDynamic( this, &ATP_VirtualRealityMotionController::OnComponentBeginOverlap );
 
 	ArcDirection = CreateDefaultSubobject<UArrowComponent>( TEXT( "ArcDirection" ) );
 	ArcDirection->SetupAttachment( HandMesh );
@@ -67,7 +67,7 @@ AVRHand::AVRHand() :
 	
 }
 
-void AVRHand::OnConstruction(const FTransform & Transform)
+void ATP_VirtualRealityMotionController::OnConstruction(const FTransform & Transform)
 {
 	Super::OnConstruction(Transform);
 
@@ -79,7 +79,7 @@ void AVRHand::OnConstruction(const FTransform & Transform)
 
 }
 
-void AVRHand::RumbleController_Implementation( float intensity )
+void ATP_VirtualRealityMotionController::RumbleController_Implementation( float intensity )
 {
 	FLatentActionInfo actionInfo;
 	actionInfo.CallbackTarget = this;
@@ -87,7 +87,7 @@ void AVRHand::RumbleController_Implementation( float intensity )
 	playerController->PlayHapticEffect( HapticEffect, Hand, intensity, false );
 }
 
-void AVRHand::OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult )
+void ATP_VirtualRealityMotionController::OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult )
 {
 	Grip = EGripState::CanGrab;
 	if ( ( OtherComp != nullptr ) && ( OtherComp != GrabSphere ) )
@@ -101,7 +101,7 @@ void AVRHand::OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComp, AAct
 }
 
 // Called when the game starts or when spawned
-void AVRHand::BeginPlay()
+void ATP_VirtualRealityMotionController::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -117,7 +117,7 @@ void AVRHand::BeginPlay()
 	TeleportCylinder->SetVisibility( false, true );
 }
 
-AActor* AVRHand::GetActorNearHand()
+AActor* ATP_VirtualRealityMotionController::GetActorNearHand()
 {
 	TArray<AActor*> overlappingActors;
 
@@ -130,7 +130,7 @@ AActor* AVRHand::GetActorNearHand()
 	// Find closest overlaping actor
 	for ( AActor *actor : overlappingActors )
 	{
-		bool isPickupable = actor->GetClass()->ImplementsInterface( UPickupable::StaticClass() );
+		bool isPickupable = actor->GetClass()->ImplementsInterface( UTP_VirtualRealityPickupable::StaticClass() );
 		if ( isPickupable )
 		{
 
@@ -153,7 +153,7 @@ AActor* AVRHand::GetActorNearHand()
 	return nearest;
 }
 
-void AVRHand::UpdateAnimationGripState()
+void ATP_VirtualRealityMotionController::UpdateAnimationGripState()
 {
 	// Default to Open
 	Grip = EGripState::Open;
@@ -183,7 +183,7 @@ void AVRHand::UpdateAnimationGripState()
 		HandMesh->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 }
 
-void AVRHand::GrabActor_Implementation()
+void ATP_VirtualRealityMotionController::GrabActor_Implementation()
 {
 	WantsToGrip = true;
 
@@ -191,13 +191,13 @@ void AVRHand::GrabActor_Implementation()
 	if ( actor && actor->IsValidLowLevel() )
 	{
 		AttachedActor = actor;
-		IPickupable::Execute_Pickup( actor, MotionController );
+		ITP_VirtualRealityPickupable::Execute_Pickup( actor, MotionController );
 		RumbleController( 0.7 );
 	}
 
 }
 
-void AVRHand::ReleaseActor_Implementation()
+void ATP_VirtualRealityMotionController::ReleaseActor_Implementation()
 {
 	WantsToGrip = false;
 
@@ -207,7 +207,7 @@ void AVRHand::ReleaseActor_Implementation()
 		// Make sure this hand is still holding the Actor (May have been taken by another hand / event)
 		if ( MotionController == actor->GetRootComponent()->GetAttachParent() )
 		{
-			IPickupable::Execute_Drop( actor );
+			ITP_VirtualRealityPickupable::Execute_Drop( actor );
 			RumbleController( 0.2 );
 		}
 	}
@@ -216,7 +216,7 @@ void AVRHand::ReleaseActor_Implementation()
 }
 
 // Called every frame
-void AVRHand::Tick( float DeltaTime )
+void ATP_VirtualRealityMotionController::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
@@ -326,7 +326,7 @@ void AVRHand::Tick( float DeltaTime )
 	
 }
 
-void AVRHand::ActivateTeleporter()
+void ATP_VirtualRealityMotionController::ActivateTeleporter()
 {
 //	if ( GEngine ) GEngine->AddOnScreenDebugMessage( -1, 0.16f, FColor::White, FString::Printf( TEXT( "Activating Teleporter " ) ) );
 	IsTeleporterActive = true;
@@ -336,7 +336,7 @@ void AVRHand::ActivateTeleporter()
 }
 
 
-void AVRHand::DisableTeleporter()
+void ATP_VirtualRealityMotionController::DisableTeleporter()
 {
 	IsTeleporterActive = false;
 	
@@ -350,7 +350,7 @@ void AVRHand::DisableTeleporter()
 	// TODO: Roomscale Mesh
 }
 
-bool AVRHand::TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &NavMeshLocation, FVector &TraceLocation )
+bool ATP_VirtualRealityMotionController::TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &NavMeshLocation, FVector &TraceLocation )
 {
 
 	FVector StartPos = ArcDirection->GetComponentLocation();
@@ -388,7 +388,7 @@ bool AVRHand::TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &N
 }
 
 
-void AVRHand::GetTeleportDestination( FVector &OutPosition, FRotator &OutRotator )
+void ATP_VirtualRealityMotionController::GetTeleportDestination( FVector &OutPosition, FRotator &OutRotator )
 {
 	IHeadMountedDisplay *hmd = GEngine->HMDDevice.Get();
 	FVector DevicePosition(ForceInitToZero);
@@ -406,7 +406,7 @@ void AVRHand::GetTeleportDestination( FVector &OutPosition, FRotator &OutRotator
 	OutRotator = TeleportRotator;
 }
 
-FRotator AVRHand::GetControllerRelativeRotation()
+FRotator ATP_VirtualRealityMotionController::GetControllerRelativeRotation()
 {
 	const FTransform InitialTransform( InitialControllerRotation );
 	const FTransform CurrentTransform = MotionController->GetComponentTransform();

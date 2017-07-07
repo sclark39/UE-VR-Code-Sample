@@ -5,12 +5,12 @@
 */
 
 #include "TP_VirtualReality.h"
-#include "VRPawn.h"
-#include "VRHand.h"
+#include "TP_VirtualRealityMotionControllerPawn.h"
+#include "TP_VirtualRealityMotionController.h"
 #include "Runtime/HeadMountedDisplay/Public/IHeadMountedDisplay.h"
 
 // Sets default values
-AVRPawn::AVRPawn()
+ATP_VirtualRealityMotionControllerPawn::ATP_VirtualRealityMotionControllerPawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -31,7 +31,7 @@ AVRPawn::AVRPawn()
 }
 
 // Called when the game starts or when spawned
-void AVRPawn::BeginPlay()
+void ATP_VirtualRealityMotionControllerPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -64,7 +64,7 @@ void AVRPawn::BeginPlay()
 
 }
 
-void AVRPawn::FinishTeleport( AVRHand *Current, const FVector &TeleportPosition, const FRotator &TeleportRotator )
+void ATP_VirtualRealityMotionControllerPawn::FinishTeleport( ATP_VirtualRealityMotionController *Current, const FVector &TeleportPosition, const FRotator &TeleportRotator )
 {
 	Current->DisableTeleporter();
 
@@ -79,7 +79,7 @@ void AVRPawn::FinishTeleport( AVRHand *Current, const FVector &TeleportPosition,
 	IsTeleporting = false;
 }
 
-void AVRPawn::ExecuteTeleport( AVRHand *Current )
+void ATP_VirtualRealityMotionControllerPawn::ExecuteTeleport( ATP_VirtualRealityMotionController *Current )
 {
 	if ( IsTeleporting )
 		return;
@@ -110,13 +110,13 @@ void AVRPawn::ExecuteTeleport( AVRHand *Current )
 }
 
 
-void AVRPawn::HandleButtonStyleTeleportActivation( UChildActorComponent *Hand, EInputEvent KeyEvent )
+void ATP_VirtualRealityMotionControllerPawn::HandleButtonStyleTeleportActivation( UChildActorComponent *Hand, EInputEvent KeyEvent )
 {
 	if ( ControlScheme == ETeleportControlScheme::StickOnly )
 		return;
 
-	AVRHand *Current = Cast<AVRHand>( Hand->GetChildActor() );
-	AVRHand *Other = Cast<AVRHand>( ( Hand == LeftHand ? RightHand : LeftHand )->GetChildActor() );
+	ATP_VirtualRealityMotionController *Current = Cast<ATP_VirtualRealityMotionController>( Hand->GetChildActor() );
+	ATP_VirtualRealityMotionController *Other = Cast<ATP_VirtualRealityMotionController>( ( Hand == LeftHand ? RightHand : LeftHand )->GetChildActor() );
 
 	if ( KeyEvent == IE_Pressed )
 	{
@@ -132,7 +132,7 @@ void AVRPawn::HandleButtonStyleTeleportActivation( UChildActorComponent *Hand, E
 	}
 }
 
-void AVRPawn::HandleStickInputStyleTeleportActivation( FVector2D AxisInput, AVRHand *Current, AVRHand *Other )
+void ATP_VirtualRealityMotionControllerPawn::HandleStickInputStyleTeleportActivation( FVector2D AxisInput, ATP_VirtualRealityMotionController *Current, ATP_VirtualRealityMotionController *Other )
 {
 	if ( ControlScheme != ETeleportControlScheme::StickOnly )
 		return;
@@ -152,7 +152,7 @@ void AVRPawn::HandleStickInputStyleTeleportActivation( FVector2D AxisInput, AVRH
 	}
 }
 
-bool AVRPawn::GetRotationFromInput( AVRHand *Current, FVector2D AxisInput, FRotator &OrientRotator )
+bool ATP_VirtualRealityMotionControllerPawn::GetRotationFromInput( ATP_VirtualRealityMotionController *Current, FVector2D AxisInput, FRotator &OrientRotator )
 {
 	FRotator ActorRotator = GetActorRotation();
 	ActorRotator.Roll = 0;
@@ -185,19 +185,19 @@ bool AVRPawn::GetRotationFromInput( AVRHand *Current, FVector2D AxisInput, FRota
 }
 
 // Called every frame
-void AVRPawn::Tick( float DeltaTime )
+void ATP_VirtualRealityMotionControllerPawn::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
 	if ( InputComponent )
 	{
-		AVRHand *Left = Cast<AVRHand>( LeftHand->GetChildActor() );
+		ATP_VirtualRealityMotionController *Left = Cast<ATP_VirtualRealityMotionController>( LeftHand->GetChildActor() );
 		FVector2D ThumbLeft(
 			InputComponent->GetAxisValue( TEXT( "ThumbLeft_Fwd" ) ),
 			InputComponent->GetAxisValue( TEXT( "ThumbLeft_Side" ) )
 		);
 
-		AVRHand *Right = Cast<AVRHand>( RightHand->GetChildActor() );
+		ATP_VirtualRealityMotionController *Right = Cast<ATP_VirtualRealityMotionController>( RightHand->GetChildActor() );
 		FVector2D ThumbRight(
 			InputComponent->GetAxisValue( TEXT( "ThumbRight_Fwd" ) ),
 			InputComponent->GetAxisValue( TEXT( "ThumbRight_Side" ) )
@@ -229,9 +229,9 @@ void AVRPawn::Tick( float DeltaTime )
 
 }
 
-void AVRPawn::HandleGrip( UChildActorComponent *Hand, EInputEvent KeyEvent )
+void ATP_VirtualRealityMotionControllerPawn::HandleGrip( UChildActorComponent *Hand, EInputEvent KeyEvent )
 {
-	AVRHand *Current = Cast<AVRHand>( Hand->GetChildActor() );
+	ATP_VirtualRealityMotionController *Current = Cast<ATP_VirtualRealityMotionController>( Hand->GetChildActor() );
 	if ( Current )
 	{
 		if ( KeyEvent == IE_Pressed )
@@ -241,7 +241,7 @@ void AVRPawn::HandleGrip( UChildActorComponent *Hand, EInputEvent KeyEvent )
 	}
 }
 
-void AVRPawn::BindInputActionUFunction( class UInputComponent* PlayerInputComponent, FName ActionName, EInputEvent KeyEvent, FName FuncName, UChildActorComponent *Hand )
+void ATP_VirtualRealityMotionControllerPawn::BindInputActionUFunction( class UInputComponent* PlayerInputComponent, FName ActionName, EInputEvent KeyEvent, FName FuncName, UChildActorComponent *Hand )
 {
 	FInputActionBinding InputActionBinding( ActionName, KeyEvent );
 
@@ -253,7 +253,7 @@ void AVRPawn::BindInputActionUFunction( class UInputComponent* PlayerInputCompon
 }
 
 // Called to bind functionality to input
-void AVRPawn::SetupPlayerInputComponent( class UInputComponent* PlayerInputComponent )
+void ATP_VirtualRealityMotionControllerPawn::SetupPlayerInputComponent( class UInputComponent* PlayerInputComponent )
 {
 	Super::SetupPlayerInputComponent( PlayerInputComponent );
 

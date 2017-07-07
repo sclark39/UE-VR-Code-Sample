@@ -6,14 +6,14 @@
 
 
 #include "TP_VirtualReality.h"
-#include "GamepadVRPawn.h"
+#include "TP_VirtualRealityHMDLocomotionPawn.h"
 #include "Runtime/HeadMountedDisplay/Public/IHeadMountedDisplay.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/HeadMountedDisplayFunctionLibrary.h"
 
 
 // Sets default values
-AGamepadVRPawn::AGamepadVRPawn()
+ATP_VirtualRealityHMDLocomotionPawn::ATP_VirtualRealityHMDLocomotionPawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -40,7 +40,7 @@ AGamepadVRPawn::AGamepadVRPawn()
 }
 
 // Called when the game starts or when spawned
-void AGamepadVRPawn::BeginPlay()
+void ATP_VirtualRealityHMDLocomotionPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -69,7 +69,7 @@ void AGamepadVRPawn::BeginPlay()
 }
 
 
-void AGamepadVRPawn::FinishTeleport()
+void ATP_VirtualRealityHMDLocomotionPawn::FinishTeleport()
 {
 	IHeadMountedDisplay *hmd = GEngine->HMDDevice.Get();
 	if ( hmd )
@@ -91,7 +91,7 @@ void AGamepadVRPawn::FinishTeleport()
 	}
 }
 
-void AGamepadVRPawn::ExecuteTeleport()
+void ATP_VirtualRealityHMDLocomotionPawn::ExecuteTeleport()
 {
 	if ( !LocationPinned )
 		return;
@@ -106,11 +106,11 @@ void AGamepadVRPawn::ExecuteTeleport()
 
 	// Wait for Fade to complete before continuing the teleport
 	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer( TimerHandle, this, &AGamepadVRPawn::FinishTeleport, FadeOutDuration, false );
+	GetWorldTimerManager().SetTimer( TimerHandle, this, &ATP_VirtualRealityHMDLocomotionPawn::FinishTeleport, FadeOutDuration, false );
 }
 
 
-void AGamepadVRPawn::ActivateTeleport()
+void ATP_VirtualRealityHMDLocomotionPawn::ActivateTeleport()
 {
 	if ( CurrentLocationValid )
 	{
@@ -121,7 +121,7 @@ void AGamepadVRPawn::ActivateTeleport()
 	LocationFound = CurrentLocationValid;
 }
 
-void AGamepadVRPawn::UpdateTeleportDirection( const FVector2D &StickInput )
+void ATP_VirtualRealityHMDLocomotionPawn::UpdateTeleportDirection( const FVector2D &StickInput )
 {
 	if ( bUseGamepad )
 	{
@@ -152,7 +152,7 @@ void AGamepadVRPawn::UpdateTeleportDirection( const FVector2D &StickInput )
 }
 
 // Called every frame
-void AGamepadVRPawn::Tick( float DeltaTime )
+void ATP_VirtualRealityHMDLocomotionPawn::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
@@ -219,12 +219,12 @@ void AGamepadVRPawn::Tick( float DeltaTime )
 }
 
 // Called to bind functionality to input
-void AGamepadVRPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void ATP_VirtualRealityHMDLocomotionPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent( PlayerInputComponent );
 
-	PlayerInputComponent->BindAction( TEXT( "HMDTeleport" ), IE_Pressed, this, &AGamepadVRPawn::ActivateTeleport );
-	PlayerInputComponent->BindAction( TEXT( "HMDTeleport" ), IE_Released, this, &AGamepadVRPawn::ExecuteTeleport );
+	PlayerInputComponent->BindAction( TEXT( "HMDTeleport" ), IE_Pressed, this, &ATP_VirtualRealityHMDLocomotionPawn::ActivateTeleport );
+	PlayerInputComponent->BindAction( TEXT( "HMDTeleport" ), IE_Released, this, &ATP_VirtualRealityHMDLocomotionPawn::ExecuteTeleport );
 
 	PlayerInputComponent->BindAxis( TEXT( "TeleportDirectionUp" ) );
 	PlayerInputComponent->BindAxis( TEXT( "TeleportDirectionRight" ) );
@@ -232,7 +232,7 @@ void AGamepadVRPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 }
 
 
-bool AGamepadVRPawn::GetTeleportDirection( FVector &OutLocation )
+bool ATP_VirtualRealityHMDLocomotionPawn::GetTeleportDirection( FVector &OutLocation )
 {
 	FVector StartPos = TraceDirection->GetComponentLocation();
 	FVector LaunchVelocity = TraceDirection->GetForwardVector() * 10000.0;

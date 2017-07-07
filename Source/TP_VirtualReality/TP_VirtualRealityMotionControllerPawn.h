@@ -8,7 +8,7 @@
 
 #include "GameFramework/Pawn.h"
 
-#include "VRPawn.generated.h"
+#include "TP_VirtualRealityMotionControllerPawn.generated.h"
 
 UENUM( BlueprintType )
 enum class ETeleportControlScheme : uint8
@@ -20,7 +20,7 @@ enum class ETeleportControlScheme : uint8
 };
 
 UCLASS()
-class TP_VIRTUALREALITY_API AVRPawn : public APawn
+class TP_VIRTUALREALITY_API ATP_VirtualRealityMotionControllerPawn : public APawn
 {
 	GENERATED_BODY()
 
@@ -36,8 +36,8 @@ class TP_VIRTUALREALITY_API AVRPawn : public APawn
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Code Components", meta = (AllowPrivateAccess = "true"))
 	class UChildActorComponent *RightHand;
 
-	void HandleStickInputStyleTeleportActivation( FVector2D AxisInput, class AVRHand *Current, class AVRHand *Other );
-	bool GetRotationFromInput( class AVRHand *Current, FVector2D AxisInput, FRotator &OrientRotator );
+	void HandleStickInputStyleTeleportActivation( FVector2D AxisInput, class ATP_VirtualRealityMotionController *Current, class ATP_VirtualRealityMotionController *Other );
+	bool GetRotationFromInput( class ATP_VirtualRealityMotionController *Current, FVector2D AxisInput, FRotator &OrientRotator );
 
 public:
 
@@ -63,7 +63,7 @@ public:
 	bool IsTeleporting;
 
 	// Sets default values for this pawn's properties
-	AVRPawn();
+	ATP_VirtualRealityMotionControllerPawn();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -83,9 +83,9 @@ public:
 	void BindInputActionUFunction( class UInputComponent* PlayerInputComponent, FName ActionName, EInputEvent KeyEvent, FName FuncName, class UChildActorComponent *Hand );
 
 	UFUNCTION()
-	void FinishTeleport( class AVRHand *Current, const FVector &TeleportPosition, const FRotator &TeleportRotator );
+	void FinishTeleport( class ATP_VirtualRealityMotionController *Current, const FVector &TeleportPosition, const FRotator &TeleportRotator );
 
-	void ExecuteTeleport( class AVRHand *Current );
+	void ExecuteTeleport( class ATP_VirtualRealityMotionController *Current );
 
 	
 	

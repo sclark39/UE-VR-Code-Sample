@@ -6,12 +6,12 @@
 
 #pragma once
 
-#include "IPickupable.h"
+#include "TP_VirtualRealityPickupable.h"
 #include "GameFramework/Actor.h"
-#include "PickupCube.generated.h"
+#include "TP_VirtualRealityPickupCube.generated.h"
 
 UCLASS()
-class TP_VIRTUALREALITY_API APickupCube : public AActor, public IPickupable
+class TP_VIRTUALREALITY_API ATP_VirtualRealityPickupCube : public AActor, public ITP_VirtualRealityPickupable
 {
 	GENERATED_BODY()
 
@@ -20,7 +20,7 @@ class TP_VIRTUALREALITY_API APickupCube : public AActor, public IPickupable
 
 public:	
 	// Sets default values for this actor's properties
-	APickupCube();
+	ATP_VirtualRealityPickupCube();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

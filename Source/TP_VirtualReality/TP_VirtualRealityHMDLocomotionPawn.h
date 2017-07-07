@@ -8,10 +8,10 @@
 #pragma once
 
 #include "GameFramework/Pawn.h"
-#include "GamepadVRPawn.generated.h"
+#include "TP_VirtualRealityHMDLocomotionPawn.generated.h"
 
 UCLASS()
-class TP_VIRTUALREALITY_API AGamepadVRPawn : public APawn
+class TP_VIRTUALREALITY_API ATP_VirtualRealityHMDLocomotionPawn : public APawn
 {
 	GENERATED_BODY()
 
@@ -73,7 +73,7 @@ public:
 	FVector Extents;
 
 	// Sets default values for this pawn's properties
-	AGamepadVRPawn();
+	ATP_VirtualRealityHMDLocomotionPawn();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

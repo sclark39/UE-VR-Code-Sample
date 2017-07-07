@@ -5,11 +5,11 @@
 */
 
 #include "TP_VirtualReality.h"
-#include "PickupCube.h"
+#include "TP_VirtualRealityPickupCube.h"
 
 
 // Sets default values
-APickupCube::APickupCube()
+ATP_VirtualRealityPickupCube::ATP_VirtualRealityPickupCube()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -22,19 +22,19 @@ APickupCube::APickupCube()
 }
 
 // Called when the game starts or when spawned
-void APickupCube::BeginPlay()
+void ATP_VirtualRealityPickupCube::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void APickupCube::Tick( float DeltaTime )
+void ATP_VirtualRealityPickupCube::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 }
 
-void APickupCube::Pickup_Implementation( class USceneComponent *AttachTo )
+void ATP_VirtualRealityPickupCube::Pickup_Implementation( class USceneComponent *AttachTo )
 {
 	StaticMeshComponent->SetSimulatePhysics( false );
 	USceneComponent *Root = GetRootComponent();
@@ -43,7 +43,7 @@ void APickupCube::Pickup_Implementation( class USceneComponent *AttachTo )
 	Root->AttachToComponent( AttachTo, AttachmentTransformRules );
 }
 
-void APickupCube::Drop_Implementation()
+void ATP_VirtualRealityPickupCube::Drop_Implementation()
 {
 	StaticMeshComponent->SetSimulatePhysics( true );
 

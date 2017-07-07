@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "IPickupable.generated.h"
+#include "TP_VirtualRealityPickupable.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UPickupable : public UInterface
+class UTP_VirtualRealityPickupable : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
@@ -18,7 +18,7 @@ class UPickupable : public UInterface
 /**
  * 
  */
-class TP_VIRTUALREALITY_API IPickupable
+class TP_VIRTUALREALITY_API ITP_VirtualRealityPickupable
 {
 	GENERATED_IINTERFACE_BODY()
 

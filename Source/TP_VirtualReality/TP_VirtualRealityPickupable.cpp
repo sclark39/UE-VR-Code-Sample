@@ -5,11 +5,11 @@
 */
 
 #include "TP_VirtualReality.h"
-#include "IPickupable.h"
+#include "TP_VirtualRealityPickupable.h"
 
 
 // This function does not need to be modified.
-UPickupable::UPickupable(const class FObjectInitializer& ObjectInitializer)
+UTP_VirtualRealityPickupable::UTP_VirtualRealityPickupable(const class FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
 }
