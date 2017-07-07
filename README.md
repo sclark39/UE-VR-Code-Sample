@@ -1,6 +1,8 @@
 # Unreal VR Template C++ Sample
 
-I was disappointed that there was no C++ version of Unreal 4.14's VR template, so I decided to make one.
+Switch to the `templatizing` branch and copy the project folder into your templates directory to use this as a template for your project!
+
+I was disappointed that there was no C++ version of Unreal 4.16's VR template, so I decided to make one.
 
 I have an Oculus Rift, so for the Rift I made the teleport work more like Robo Rally since the original control scheme was pretty awkward. This can be changed in the Pawn's settings.
 
