@@ -237,27 +237,8 @@ bool AGamepadVRPawn::GetTeleportDirection( FVector &OutLocation )
 	FVector StartPos = TraceDirection->GetComponentLocation();
 	FVector LaunchVelocity = TraceDirection->GetForwardVector() * 10000.0;
 
-// 	FVector EndPos = StartPos + LaunchVelocity;
-// 		
-// 	FHitResult OutHit;
-// 
-// 	TArray<AActor *> ActorsToIgnore;
-// 	ActorsToIgnore.Push( this );
-// 
-// 	UKismetSystemLibrary::SphereTraceSingle( GetWorld(), StartPos, EndPos, 60, UEngineTypes::ConvertToTraceType( ECollisionChannel::ECC_Visibility ), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, false );
-// 
-// 	const bool bSurfaceIsHorizontal = ( FVector::DotProduct( FVector::UpVector, OutHit.ImpactNormal ) >= 0.6 );
-// 	if ( OutHit.bBlockingHit && bSurfaceIsHorizontal )
-// 	{
-// 		OutLocation = OutHit.ImpactPoint;
-// 		return true;
-// 	}
-// 
-// 	return false;
-// 
-
 	// Predict Projectile Path
-	FPredictProjectilePathParams PredictParams( 0.0f, StartPos, LaunchVelocity, 0.0f, UEngineTypes::ConvertToObjectType( ECC_WorldStatic ) );
+	FPredictProjectilePathParams PredictParams( 0.0f, StartPos, LaunchVelocity, 2.0f, UEngineTypes::ConvertToObjectType( ECC_WorldStatic ) );
 	FPredictProjectilePathResult PredictResult;
 	const bool DidPredictPath = UGameplayStatics::PredictProjectilePath( GetWorld(), PredictParams, PredictResult );
 	if ( !DidPredictPath )
@@ -271,7 +252,7 @@ bool AGamepadVRPawn::GetTeleportDirection( FVector &OutLocation )
 	if ( !DidProjectToNav )
 		return false;
 
+	
 	OutLocation = ProjectedHitLocation.Location;
-
 	return true;
 }
