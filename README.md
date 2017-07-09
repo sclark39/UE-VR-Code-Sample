@@ -10,7 +10,7 @@
 - Copy TP_VirtualReality, TP_VirtualRealityBP, and TemplateResources folders in
 - Launch Unreal, create a project using the template, and enjoy.
 
-### About
+## About
 
 I was disappointed that there was no C++ version of Unreal 4.14's VR template, so I decided to make one.
 
@@ -20,11 +20,11 @@ If you see things that are not to Unreal Engine's coding standard, or know an ea
 
 I want this to be a learning resource that anyone can use, so I am publishing it under the MIT License but if this license causes an issue for you please let me know!
 
-## Changed
+### Changed
 - Teleport changed to be activated/deactivated by stick input like Robo Rally, rather than a seperate button for Rift (optional)
 - Fixed an issue in the HMDLocomotionPawn Blueprint which was passing in an incorrect launch velocity
 
-## Missing
+### Missing
 - SteamVRChaperone / RoomScaleMesh not implemented
 
 See Issues tab for info on the progress of these missing features. I do not have a Vive or PSVR, so they are untested. I am happy to accept pull requests for any issues found.
