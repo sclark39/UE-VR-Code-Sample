@@ -9,7 +9,8 @@
 - Switch to 'templatizing' branch, or download latest template package release: 
    - https://github.com/sclark39/UE-VR-Code-Sample/releases/tag/ue-4.16.2-template
 - Open up explorer to C:\Program Files\Epic Games\UE_4.16\Templates
-- Copy TP_VirtualReality, TP_VirtualRealityBP, and TemplateResources folders in
+- Delete TP_VirtualRealityBP folder
+- Copy TP_VirtualReality, TP_VirtualRealityBP, and TemplateResources folders from this project in
 - Launch Unreal, create a project using the template, and enjoy.
 
 ## About
