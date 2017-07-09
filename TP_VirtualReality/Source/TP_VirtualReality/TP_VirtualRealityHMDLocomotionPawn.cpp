@@ -1,10 +1,3 @@
-/*
-* Author: Skyler Clark (@sclark39)
-* Website: http://skylerclark.com
-* License: MIT License
-*/
-
-
 #include "TP_VirtualReality.h"
 #include "TP_VirtualRealityHMDLocomotionPawn.h"
 #include "Runtime/HeadMountedDisplay/Public/IHeadMountedDisplay.h"

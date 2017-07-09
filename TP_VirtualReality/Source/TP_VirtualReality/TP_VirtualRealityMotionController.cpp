@@ -1,15 +1,3 @@
-/*
- * Copyright (c) 2017 Skyler Clark. All rights reserved.
- *
- * Licensed under the MIT License. See License.md file in the
- * project root for full license information.
- *
- * Author: Skyler Clark (@sclark39)
- * Website: http://skylerclark.com
-*
-* Github: https://github.com/sclark39/UE-VR-Code-Sample/
- */
-
 #include "TP_VirtualReality.h"
 #include "TP_VirtualRealityMotionController.h"
 #include "TP_VirtualRealityPickupable.h"
