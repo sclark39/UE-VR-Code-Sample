@@ -1,11 +1,13 @@
 # Unreal VR Template C++ Sample
 
 ### Setup to use as a sample project
-- Clone 'master' branch
+- Clone 'master' branch, or download latest sample project release: 
+   - https://github.com/sclark39/UE-VR-Code-Sample/releases/tag/ue-4.16.2
 - Open uproject file
 
 ### Setup to use as a Template
-- Switch to 'templatizing' branch
+- Switch to 'templatizing' branch, or download latest template package release: 
+   - https://github.com/sclark39/UE-VR-Code-Sample/releases/tag/ue-4.16.2-template
 - Open up explorer to C:\Program Files\Epic Games\UE_4.16\Templates
 - Copy TP_VirtualReality, TP_VirtualRealityBP, and TemplateResources folders in
 - Launch Unreal, create a project using the template, and enjoy.
