@@ -22,7 +22,6 @@ I want this to be a learning resource that anyone can use, so I am publishing it
 
 ## Changed
 - Teleport changed to be activated/deactivated by stick input like Robo Rally, rather than a seperate button for Rift (optional)
-- Added a workaround (via a blueprint) to trigger haptic feedback when the rumble event occurs since Touch has no rumble capability
 - Fixed an issue in the HMDLocomotionPawn Blueprint which was passing in an incorrect launch velocity
 
 ## Missing
