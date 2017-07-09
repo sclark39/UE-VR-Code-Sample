@@ -1,0 +1,48 @@
+{
+	"Version": 1,
+	"Name":
+	[
+		{
+			"Language": "en",
+			"Text": "VirtualReality Shared Resource Standard"
+		}
+	],
+	"Description":
+	[
+		{
+			"Language": "en",
+			"Text": "Shared Resource Pack for VirtualReality"
+		}
+	],
+	"AssetTypes":
+	[
+		{
+			"Language": "en",
+			"Text": ""
+		}
+	],
+	"SearchTags":
+	[
+		{
+			"Language": "en",
+			"Text": ""
+		}
+	],	
+	"ClassTypes": " ",
+	"Category": "SharedPack",
+	"Thumbnail": "VirtualReality.png",
+	"Screenshots":
+	[
+		"VirtualReality_Preview.png"
+	],
+	"Ident": "VirtualRealityStandard",
+	"AdditionalFiles":
+	{
+		"DestinationFilesFolder": "VirtualReality",
+		"AdditionalFilesList":
+		[
+			"Templates/TemplateResources/Standard/VirtualReality/Content/*.*"
+		]
+	}
+}
+
