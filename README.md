@@ -24,7 +24,7 @@ If you see things that are not to Unreal Engine's coding standard, or know an ea
 I want this to be a learning resource that anyone can use, so I am publishing it under the MIT License but if this license causes an issue for you please let me know!
 
 ### Changed
-- Teleport changed to be activated/deactivated by stick input like Robo Rally, rather than a seperate button for Rift (optional)
+- Teleport changed to be activated/deactivated by stick input like Robo Recall, rather than a seperate button for Rift (optional)
 - Fixed an issue in the HMDLocomotionPawn Blueprint which was passing in an incorrect launch velocity
 
 ### Missing
