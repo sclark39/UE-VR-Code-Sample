@@ -10,7 +10,15 @@ public class VRCode : ModuleRules
 {
 	public VRCode(ReadOnlyTargetRules ROTargetRules) : base(ROTargetRules)
 	{
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay" });
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core",
+			"CoreUObject",
+			"Engine",
+			"InputCore",
+			"HeadMountedDisplay",
+			"SteamVR"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
