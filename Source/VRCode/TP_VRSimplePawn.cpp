@@ -28,7 +28,7 @@ AGamepadVRPawn::AGamepadVRPawn()
 
 	TraceDirection = CreateDefaultSubobject<UArrowComponent>( TEXT( "TraceDirection" ) );
 	TraceDirection->SetupAttachment( Camera );
-	
+
 	TeleportPin = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "TeleportPin" ) );
 	TeleportPin->SetupAttachment( Scene );
 
@@ -59,7 +59,7 @@ void AGamepadVRPawn::BeginPlay()
 			// PSVR
 			hmd->SetTrackingOrigin( EHMDTrackingOrigin::Eye );
 
-			// Set Height Offset for Tracking			
+			// Set Height Offset for Tracking
 			VROrigin->AddLocalOffset( FVector( 0, 0, DefaultPlayerHeight ) );
 		}
 	}
@@ -174,7 +174,7 @@ void AGamepadVRPawn::Tick( float DeltaTime )
 		TeleportPin->SetVisibility( CurrentLocationValid, true );
 	}
 
-	
+
 	// Update Teleport Meshes Position and Orientations
 	bool bShouldUpdateFacing = false;
 	if ( bUseGamepad )
@@ -252,7 +252,7 @@ bool AGamepadVRPawn::GetTeleportDirection( FVector &OutLocation )
 	if ( !DidProjectToNav )
 		return false;
 
-	
+
 	OutLocation = ProjectedHitLocation.Location;
 	return true;
 }

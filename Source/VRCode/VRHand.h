@@ -52,11 +52,11 @@ class VRCODE_API AVRHand : public AActor
 
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Code Components", meta = ( AllowPrivateAccess = "true" ) )
 	class UStaticMeshComponent *TeleportArrow;
-	
+
 
 	FRotator InitialControllerRotation;
 	TArray<class USplineMeshComponent*> SplineMeshes;
-public:	
+public:
 
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Constants" )
 	class UStaticMesh *BeamMesh;
@@ -98,12 +98,12 @@ public:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
 	virtual void OnConstruction( const FTransform & Transform ) override;
-	
+
 	UFUNCTION()
 	void OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult );
 

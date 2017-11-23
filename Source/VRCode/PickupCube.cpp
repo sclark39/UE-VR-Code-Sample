@@ -25,7 +25,7 @@ APickupCube::APickupCube()
 void APickupCube::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame

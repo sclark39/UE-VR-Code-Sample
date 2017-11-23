@@ -42,7 +42,7 @@ AVRHand::AVRHand() :
 	HandMesh->SetupAttachment( MotionController );
 
 	GrabSphere = CreateDefaultSubobject<USphereComponent>( TEXT( "GrabSphere" ) );
-	GrabSphere->SetupAttachment( HandMesh ); 
+	GrabSphere->SetupAttachment( HandMesh );
 	GrabSphere->InitSphereRadius( 10.0f );
 	GrabSphere->OnComponentBeginOverlap.AddDynamic( this, &AVRHand::OnComponentBeginOverlap );
 
@@ -64,7 +64,7 @@ AVRHand::AVRHand() :
 
 	TeleportArrow = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "TeleportArrow" ) );
 	TeleportArrow->SetupAttachment( TeleportCylinder );
-	
+
 }
 
 void AVRHand::OnConstruction(const FTransform & Transform)
@@ -145,8 +145,8 @@ AActor* AVRHand::GetActorNearHand()
 
 	// 	if ( GEngine && Hand == EControllerHand::Right )
 // 		GEngine->AddOnScreenDebugMessage( -1, 0.16f, FColor::Red,
-// 			FString::Printf( TEXT( "Actors near right hand %d, found pickupable: %d, %s" ), 
-// 			overlappingActors.Num(), 
+// 			FString::Printf( TEXT( "Actors near right hand %d, found pickupable: %d, %s" ),
+// 			overlappingActors.Num(),
 // 			count,
 // 			nearest ? TEXT( "TRUE" ) : TEXT( "FALSE" ) ) );
 
@@ -169,7 +169,7 @@ void AVRHand::UpdateAnimationGripState()
 		if ( WantsToGrip )
 			Grip = EGripState::Grab;
 
-		// If not holding something, the hand should open or close 
+		// If not holding something, the hand should open or close
 		// slightly when passing over an interactable object
 		AActor *actor = GetActorNearHand();
 		if ( actor )
@@ -269,7 +269,7 @@ void AVRHand::Tick( float DeltaTime )
 			}
 
 			TeleportArrow->SetWorldRotation( ArrowRotator );
-			
+
 			// Make Spline....
 			if ( TracePoints.Num() > 0 )
 			{
@@ -289,7 +289,7 @@ void AVRHand::Tick( float DeltaTime )
 					FVector EndTangent = ArcSpline->GetTangentAtSplinePoint( i + 1, ESplineCoordinateSpace::Local );
 
 					USplineMeshComponent *SplineMeshComponent;
-						
+
 					if ( i >= SplineMeshes.Num() )
 					{
 						SplineMeshComponent = NewObject<USplineMeshComponent>( this, USplineMeshComponent::StaticClass() );
@@ -315,7 +315,7 @@ void AVRHand::Tick( float DeltaTime )
 				RegisterAllComponents();
 			}
 
-			
+
 		}
 
 		// If it changed, rumble.
@@ -323,7 +323,7 @@ void AVRHand::Tick( float DeltaTime )
 			RumbleController( 0.3 );
 		LastIsValidTeleportDestination = IsValidTeleportDestination;
 	}
-	
+
 }
 
 void AVRHand::ActivateTeleporter()
@@ -339,7 +339,7 @@ void AVRHand::ActivateTeleporter()
 void AVRHand::DisableTeleporter()
 {
 	IsTeleporterActive = false;
-	
+
 	TeleportCylinder->SetVisibility( false, true );
 	ArcEndPoint->SetVisibility( false );
 
@@ -359,7 +359,7 @@ bool AVRHand::TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &N
 	LaunchVelocity *= TeleportLaunchVelocity;
 
 	// Predict Projectile Path
-	
+
 	FPredictProjectilePathParams PredictParams( 0.0f, StartPos, LaunchVelocity, 4.0f, UEngineTypes::ConvertToObjectType( ECC_WorldStatic ) );
 	FPredictProjectilePathResult PredictResult;
 	const bool DidPredictPath = UGameplayStatics::PredictProjectilePath( GetWorld(), PredictParams, PredictResult );
@@ -367,9 +367,9 @@ bool AVRHand::TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &N
 		return false;
 
 	// Getting Projected Endpoint
-	
+
 	FVector PointToProject = PredictResult.HitResult.Location;
-	FNavLocation ProjectedHitLocation; 
+	FNavLocation ProjectedHitLocation;
 	UNavigationSystem *NavSystem = GetWorld()->GetNavigationSystem();
 	const bool DidProjectToNav = NavSystem->ProjectPointToNavigation( PointToProject, ProjectedHitLocation, Extents );
 	if ( !DidProjectToNav )
@@ -382,7 +382,7 @@ bool AVRHand::TraceTeleportDestination( TArray<FVector> &TracePoints, FVector &N
 		TracePoints.Push( Point.Location );
 
 	TraceLocation = PredictResult.HitResult.Location;
-	NavMeshLocation = ProjectedHitLocation.Location;	
+	NavMeshLocation = ProjectedHitLocation.Location;
 
 	return true;
 }
