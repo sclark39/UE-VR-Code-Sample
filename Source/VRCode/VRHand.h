@@ -10,6 +10,8 @@
 
 #include "VRHand.generated.h"
 
+class USteamVRChaperoneComponent;
+
 UENUM(BlueprintType)
 enum class EGripState : uint8
 {
@@ -54,6 +56,12 @@ class VRCODE_API AVRHand : public AActor
 	class UStaticMeshComponent *TeleportArrow;
 	
 
+	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Code Components", meta = ( AllowPrivateAccess = "true" ) )
+	class UStaticMeshComponent *RoomScaleMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Code Components", meta = (AllowPrivateAccess = "true"))
+	class USteamVRChaperoneComponent *SteamVRChaperone;
+
 	FRotator InitialControllerRotation;
 	TArray<class USplineMeshComponent*> SplineMeshes;
 public:	
@@ -82,6 +90,12 @@ public:
 
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Variables" )
 	bool IsTeleporterActive;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Code Variables")
+	bool IsRoomScale = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Code Variables")
+	float ChaperoneMeshHeight = 70;
 
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Code Variables" )
 	EGripState Grip;
@@ -127,4 +141,6 @@ public:
 
 	FRotator GetControllerRelativeRotation();
 
+	void SetupRoomScaleOutline();
+	void UpdateRoomScaleOutline();
 };
