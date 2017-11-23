@@ -19,6 +19,7 @@
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "Runtime/Engine/Classes/Kismet/HeadMountedDisplayFunctionLibrary.h"
 #include "Runtime/Engine/Classes/Components/SplineMeshComponent.h"
+#include "SteamVRChaperoneComponent.h"
 
 // Sets default values
 AVRHand::AVRHand() :
@@ -64,7 +65,12 @@ AVRHand::AVRHand() :
 
 	TeleportArrow = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "TeleportArrow" ) );
 	TeleportArrow->SetupAttachment( TeleportCylinder );
-	
+
+	RoomScaleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RoomScaleMesh"));
+	RoomScaleMesh->SetupAttachment( TeleportArrow );
+
+	SteamVRChaperone = CreateDefaultSubobject<USteamVRChaperoneComponent>(TEXT("SteamVRChaperone"));
+
 }
 
 void AVRHand::OnConstruction(const FTransform & Transform)
@@ -104,6 +110,8 @@ void AVRHand::OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComp, AAct
 void AVRHand::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetupRoomScaleOutline();
 
 	MotionController->Hand = Hand;
 	if ( Hand == EControllerHand::Left )
@@ -229,7 +237,7 @@ void AVRHand::Tick( float DeltaTime )
 		FVector HitLocation;
 		bool IsValidTeleportDestination = TraceTeleportDestination( TracePoints, NavLocation, HitLocation );
 
-		TeleportCylinder->SetVisibility( IsValidTeleportDestination, true );
+		UpdateRoomScaleOutline();
 
 		if ( IsValidTeleportDestination )
 		{
@@ -331,7 +339,11 @@ void AVRHand::ActivateTeleporter()
 //	if ( GEngine ) GEngine->AddOnScreenDebugMessage( -1, 0.16f, FColor::White, FString::Printf( TEXT( "Activating Teleporter " ) ) );
 	IsTeleporterActive = true;
 
-	if ( MotionController )
+	TeleportCylinder->SetVisibility(true, true);
+
+	TeleportCylinder->SetVisibility(IsRoomScale, false);
+
+	if (MotionController)
 		InitialControllerRotation = MotionController->GetComponentRotation();
 }
 
@@ -413,4 +425,49 @@ FRotator AVRHand::GetControllerRelativeRotation()
 	const FTransform RelativeTransform = CurrentTransform.GetRelativeTransform( InitialTransform );
 
 	return RelativeTransform.GetRotation().Rotator();
+}
+
+void AVRHand::SetupRoomScaleOutline()
+{
+	auto Vertices = SteamVRChaperone->GetBounds();
+	auto Normal = FVector(0.0f, 0.0f, 1.0f);
+
+	FVector RectCenter;
+	FRotator RectRotation;
+	float SideLengthX, SideLengthY;
+
+	UKismetMathLibrary::MinimumAreaRectangle(GetWorld(), Vertices, Normal, RectCenter, RectRotation, SideLengthX, SideLengthY);
+
+	if (FMath::IsNearlyEqual(SideLengthX, 100.0f, 0.01f) || FMath::IsNearlyEqual(SideLengthY, 100.0f, 0.01f))
+	{
+		IsRoomScale = false;
+		return; // Measure Chaperone (Defaults to 100x100 if roomscale isn't used)
+	}
+
+	IsRoomScale = true;
+
+	// Setup Room-scale mesh (1x1x1 units in size by default) to the size of the room-scale dimensions
+	RoomScaleMesh->SetWorldScale3D(FVector(SideLengthX, SideLengthY, ChaperoneMeshHeight));
+	RoomScaleMesh->SetRelativeRotation(RectRotation);
+}
+
+void AVRHand::UpdateRoomScaleOutline()
+{
+	if (RoomScaleMesh->IsVisible())
+	{
+		FRotator DeviceRotation;
+		FVector DevicePosition;
+		UHeadMountedDisplayFunctionLibrary::GetOrientationAndPosition(DeviceRotation, DevicePosition);
+
+		DeviceRotation.Pitch = 0;
+		DeviceRotation.Roll = 0;
+
+		DevicePosition.X = -DevicePosition.X;
+		DevicePosition.Y = -DevicePosition.Y;
+		DevicePosition.Z = 0;
+
+		FVector NewLocation = DeviceRotation.UnrotateVector(DevicePosition);
+
+		RoomScaleMesh->SetRelativeLocation(NewLocation, false, nullptr, ETeleportType::None);
+	}
 }
