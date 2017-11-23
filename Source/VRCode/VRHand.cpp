@@ -26,7 +26,7 @@ AVRHand::AVRHand() :
 {
 
 
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	Hand = EControllerHand::Right;
@@ -255,7 +255,7 @@ void AVRHand::Tick( float DeltaTime )
 			// Rotate Arrow
 			FRotator ArrowRotator = TeleportRotator;
 
- 			IHeadMountedDisplay *hmd = GEngine->HMDDevice.Get();
+			IHeadMountedDisplay *hmd = GEngine->HMDDevice.Get();
 			if ( hmd )
 			{
 				FRotator DeviceRotation;

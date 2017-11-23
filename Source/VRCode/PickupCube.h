@@ -33,7 +33,7 @@ public:
 // 	void Pickup( class USceneComponent *AttachTo );
 	virtual void Pickup_Implementation( class USceneComponent *AttachTo );
 //
- 	//UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Pickupable Interface" )
+	//UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Pickupable Interface" )
 // 	void Drop();
 	virtual void Drop_Implementation();
 

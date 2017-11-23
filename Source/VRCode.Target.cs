@@ -12,6 +12,6 @@ public class VRCodeTarget : TargetRules
 	public VRCodeTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-        ExtraModuleNames.AddRange(new string[] { "VRCode" });
-    }
+		ExtraModuleNames.AddRange(new string[] { "VRCode" });
+	}
 }
