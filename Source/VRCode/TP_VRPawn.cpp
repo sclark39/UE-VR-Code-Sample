@@ -12,7 +12,7 @@
 // Sets default values
 AVRPawn::AVRPawn()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	VROrigin = CreateDefaultSubobject<USceneComponent>(TEXT("VROrigin"));
@@ -57,7 +57,7 @@ void AVRPawn::BeginPlay()
 			// PSVR
 			hmd->SetTrackingOrigin(EHMDTrackingOrigin::Eye);
 
-			// Set Height Offset for Tracking			
+			// Set Height Offset for Tracking
 			VROrigin->AddLocalOffset( FVector( 0, 0, DefaultPlayerHeight ) );
 		}
 	}
@@ -101,7 +101,7 @@ void AVRPawn::ExecuteTeleport( AVRHand *Current )
 	// Fade out screen
 	APlayerCameraManager *PlayerCamera = UGameplayStatics::GetPlayerCameraManager( GetWorld(), 0 );
 	PlayerCamera->StartCameraFade( 0, 1, FadeOutDuration, TeleportFadeColor, false, true );
-	
+
 	// Wait for Fade to complete before continuing the teleport
 	FTimerHandle TimerHandle;
 	FTimerDelegate TimerDelegate;
@@ -145,9 +145,9 @@ void AVRPawn::HandleStickInputStyleTeleportActivation( FVector2D AxisInput, AVRH
 		if ( Other )
 			Other->DisableTeleporter();
 	}
-	else 
+	else
 	{
-		if ( Current && Current->IsTeleporterActive )		
+		if ( Current && Current->IsTeleporterActive )
 			ExecuteTeleport( Current );
 	}
 }
@@ -223,7 +223,7 @@ void AVRPawn::Tick( float DeltaTime )
 			if ( GetRotationFromInput( Right, ThumbRight, OrientRotator ) || ControlScheme != ETeleportControlScheme::StickOnly )
 				Right->TeleportRotator = OrientRotator;
 		}
-		
+
 
 	}
 

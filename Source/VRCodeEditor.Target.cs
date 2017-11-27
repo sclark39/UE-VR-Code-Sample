@@ -9,10 +9,10 @@ using System.Collections.Generic;
 
 public class VRCodeEditorTarget : TargetRules
 {
-    public VRCodeEditorTarget(TargetInfo Target) : base(Target)
-    {
-        Type = TargetType.Editor;
+	public VRCodeEditorTarget(TargetInfo Target) : base(Target)
+	{
+		Type = TargetType.Editor;
 
-        ExtraModuleNames.AddRange(new string[] { "VRCode" });
-    }
+		ExtraModuleNames.AddRange(new string[] { "VRCode" });
+	}
 }

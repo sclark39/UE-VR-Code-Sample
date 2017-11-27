@@ -10,14 +10,14 @@
 #include "VRCodeGameModeBase.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class VRCODE_API AVRCodeGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
-	
-	
-	
+
+
+
+
 };

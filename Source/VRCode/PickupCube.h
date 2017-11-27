@@ -18,22 +18,22 @@ class VRCODE_API APickupCube : public AActor, public IPickupable
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Code Components", meta = ( AllowPrivateAccess = "true" ) )
 	class UStaticMeshComponent *StaticMeshComponent;
 
-public:	
+public:
 	// Sets default values for this actor's properties
 	APickupCube();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-// 	
+//
 // 	UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Pickupable Interface" )
 // 	void Pickup( class USceneComponent *AttachTo );
 	virtual void Pickup_Implementation( class USceneComponent *AttachTo );
-// 
- 	//UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Pickupable Interface" )
+//
+	//UFUNCTION( BlueprintNativeEvent, BlueprintCallable, Category = "Pickupable Interface" )
 // 	void Drop();
 	virtual void Drop_Implementation();
 
